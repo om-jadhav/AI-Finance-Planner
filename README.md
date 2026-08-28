@@ -1,4 +1,4 @@
-# Finance Planner — PERN Auth Setup
+# Finance Planner — PERN Setup
 
 ## What's included
 - **Backend**: Express + Prisma (Postgres via Supabase) + JWT auth (access + refresh, with rotation)
