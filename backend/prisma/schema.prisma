@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String    @id @default(uuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  refreshTokens RefreshToken[]
+
+  // Fields you'll likely add for the finance-planning profile:
+  // netWorth     Float?
+  // riskScore    Int?
+  // goals        Json?
+
+  @@map("users")
+}
+
+// Storing refresh tokens server-side lets you revoke individual sessions
+// (logout on one device, force-logout everywhere, etc.) instead of just
+// trusting whatever token the client presents.
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  revoked   Boolean  @default(false)
+
+  @@map("refresh_tokens")
+}
