@@ -16,10 +16,13 @@ model User {
 
   refreshTokens RefreshToken[]
 
-  // Fields you'll likely add for the finance-planning profile:
-  // netWorth     Float?
-  // riskScore    Int?
-  // goals        Json?
+  // Financial Profile — split into 5 separate tables, one per onboarding
+  // step, each related 1:1 to the user.
+  personalIncomeProfile PersonalIncomeProfile?
+  goal                  Goal?
+  investmentCapacity    InvestmentCapacity?
+  riskProfile           RiskProfile?
+  investmentPreferences InvestmentPreferences?
 
   @@map("users")
 }
@@ -37,4 +40,167 @@ model RefreshToken {
   revoked   Boolean  @default(false)
 
   @@map("refresh_tokens")
+}
+
+// ---------------- FINANCIAL PROFILE ----------------
+// Split into 5 separate tables — one per onboarding step — each related
+// 1:1 to User via a unique userId. A step is considered "complete" once
+// its row exists for that user. Kept in clear, machine-readable
+// enums/fields so the future LLM planning engine can consume it directly
+// without re-parsing free text.
+
+enum EmploymentStatus {
+  SALARIED
+  SELF_EMPLOYED
+  BUSINESS_OWNER
+  STUDENT
+  RETIRED
+  OTHER
+}
+
+enum FinancialGoalType {
+  RETIREMENT
+  WEALTH_CREATION
+  EDUCATION
+  HOME_PURCHASE
+  MARRIAGE
+  TRAVEL
+  EMERGENCY_FUND
+  OTHER
+}
+
+enum GoalFlexibility {
+  FLEXIBLE
+  SOMEWHAT_FLEXIBLE
+  FIXED_DEADLINE
+}
+
+// What the user already holds their existing investments in (step 3)
+enum InvestmentHolding {
+  STOCKS
+  MUTUAL_FUNDS
+  GOLD
+  ETFS
+  FIXED_DEPOSITS
+  BONDS
+  OTHER
+}
+
+enum MarketDropReaction {
+  SELL_EVERYTHING
+  SELL_SOME
+  HOLD_AND_WAIT
+  INVEST_MORE
+}
+
+enum InvestmentHorizon {
+  LESS_THAN_1_YEAR
+  ONE_TO_THREE_YEARS
+  THREE_TO_FIVE_YEARS
+  FIVE_TO_TEN_YEARS
+  TEN_PLUS_YEARS
+}
+
+enum RiskPreference {
+  PROTECT_MONEY
+  BALANCE_SAFETY_GROWTH
+  MODERATE_RISK
+  HIGH_RISK
+}
+
+// Categories the user is comfortable investing in going forward (step 5)
+enum InvestmentCategory {
+  MUTUAL_FUNDS
+  STOCKS
+  GOLD
+  GOLD_ETFS
+  SILVER_ETFS
+  NIFTY_ETFS
+  BANKING_ETFS
+  OPEN_TO_ALL
+}
+
+// Step 1 — Personal Information & Income
+model PersonalIncomeProfile {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  age              Int
+  employmentStatus EmploymentStatus
+  monthlyIncome    Float
+  monthlyExpense   Float
+  currentSavings   Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("personal_income_profiles")
+}
+
+// Step 2 — Goal
+model Goal {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  primaryGoal               FinancialGoalType
+  goalTargetAmount          Float
+  goalTimeYears             Int
+  goalFlexibility           GoalFlexibility
+  hasMajorExpenseBeforeGoal Boolean
+  majorExpenseAmount        Float?
+  majorExpenseYear          Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("goals")
+}
+
+// Step 3 — Investment Capacity
+model InvestmentCapacity {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  monthlyInvestmentCapacity Float
+  hasExistingInvestments    Boolean
+  existingInvestmentTypes   InvestmentHolding[] @default([])
+  existingInvestmentAmount  Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("investment_capacities")
+}
+
+// Step 4 — Risk Profile
+model RiskProfile {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  marketDropReaction MarketDropReaction
+  investmentHorizon  InvestmentHorizon
+  riskPreference     RiskPreference
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("risk_profiles")
+}
+
+// Step 5 — Investment Preferences
+model InvestmentPreferences {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  preferredCategories InvestmentCategory[] @default([])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("investment_preferences")
 }

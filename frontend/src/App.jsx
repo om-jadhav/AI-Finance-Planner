@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import { AuthProvider } from "./context/AuthContext";
@@ -7,6 +6,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import FinancialProfile from "./pages/FinancialProfile";
 
 export default function App() {
   return (
@@ -26,6 +26,15 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/financial-profile"
+            element={
+              <ProtectedRoute>
+                <FinancialProfile />
               </ProtectedRoute>
             }
           />
