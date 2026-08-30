@@ -31,6 +31,10 @@ const personalIncomeSchema = z.object({
   monthlyIncome: money("Monthly income"),
   monthlyExpense: money("Monthly expense"),
   currentSavings: money("Current savings"),
+  // Added for the Grok/FastAPI plan-generation request contract.
+  dependents: z.coerce.number().int().min(0, "Dependents can't be negative"),
+  totalDebt: money("Total debt"),
+  investmentExperience: z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED"]),
 });
 
 const goalSchema = z
@@ -48,6 +52,8 @@ const goalSchema = z
     goalTargetAmount: money("Goal amount"),
     goalTimeYears: z.coerce.number().min(0, "Enter a valid number of years"),
     goalFlexibility: z.enum(["FLEXIBLE", "SOMEWHAT_FLEXIBLE", "FIXED_DEADLINE"]),
+    // Added for the Grok/FastAPI plan-generation request contract.
+    priority: z.enum(["LOW", "MEDIUM", "HIGH"]),
     hasMajorExpenseBeforeGoal: z.boolean(),
     majorExpenseAmount: money("Expected expense").optional().nullable(),
     majorExpenseYear: z.coerce.number().int().optional().nullable(),

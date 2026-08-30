@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import FinancialProfile from "./pages/FinancialProfile";
+import GeneratedPlan from "./pages/GeneratePlan";
 
 export default function App() {
   return (
@@ -38,7 +39,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-
+          <Route path="/plan" element={<GeneratedPlan />} />
           {/* Unknown routes */}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>

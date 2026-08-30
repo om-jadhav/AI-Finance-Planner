@@ -31,6 +31,14 @@ export default function Sidebar({ active }) {
           <Icon>◈</Icon>
           Financial Profile
         </Link>
+
+        <Link
+          to="/plan"
+          className={`nav-item ${active === "plan" ? "active" : ""}`}
+        >
+          <Icon>◎</Icon>
+          Your Plan
+        </Link>
       </nav>
 
       <div className="sidebar-bottom">

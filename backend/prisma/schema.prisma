@@ -24,6 +24,9 @@ model User {
   riskProfile           RiskProfile?
   investmentPreferences InvestmentPreferences?
 
+  // Every generated plan is saved (history), not overwritten.
+  financialPlans FinancialPlan[]
+
   @@map("users")
 }
 
@@ -58,6 +61,14 @@ enum EmploymentStatus {
   OTHER
 }
 
+// Self-rated investing experience — required by the LLM planning
+// service's request contract (profile.investment_experience).
+enum InvestmentExperience {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
 enum FinancialGoalType {
   RETIREMENT
   WEALTH_CREATION
@@ -73,6 +84,14 @@ enum GoalFlexibility {
   FLEXIBLE
   SOMEWHAT_FLEXIBLE
   FIXED_DEADLINE
+}
+
+// How important this goal is relative to others — required by the LLM
+// planning service's request contract (goal.priority).
+enum GoalPriority {
+  LOW
+  MEDIUM
+  HIGH
 }
 
 // What the user already holds their existing investments in (step 3)
@@ -117,6 +136,7 @@ enum InvestmentCategory {
   SILVER_ETFS
   NIFTY_ETFS
   BANKING_ETFS
+  FIXED_DEPOSITS
   OPEN_TO_ALL
 }
 
@@ -131,6 +151,11 @@ model PersonalIncomeProfile {
   monthlyIncome    Float
   monthlyExpense   Float
   currentSavings   Float
+
+  // Added for the Grok/FastAPI plan-generation request contract.
+  dependents           Int                  @default(0)
+  totalDebt            Float                @default(0)
+  investmentExperience InvestmentExperience @default(BEGINNER)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -151,6 +176,9 @@ model Goal {
   hasMajorExpenseBeforeGoal Boolean
   majorExpenseAmount        Float?
   majorExpenseYear          Int?
+
+  // Added for the Grok/FastAPI plan-generation request contract.
+  priority GoalPriority @default(MEDIUM)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -203,4 +231,21 @@ model InvestmentPreferences {
   updatedAt DateTime @updatedAt
 
   @@map("investment_preferences")
+}
+
+// ---------------- GENERATED PLAN ----------------
+// Stores each call to the FastAPI/Grok /generate-plan endpoint. The
+// response has several dynamic-key sections (allocation percentages,
+// recommended instruments, plan options) that vary per user, so the
+// full response is kept as raw JSON rather than forced into fixed
+// columns. requestPayload is stored alongside it for debugging/replay.
+model FinancialPlan {
+  id             String   @id @default(uuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  requestPayload Json
+  response       Json
+  createdAt      DateTime @default(now())
+
+  @@map("financial_plans")
 }

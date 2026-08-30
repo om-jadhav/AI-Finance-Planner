@@ -20,6 +20,12 @@ const EMPLOYMENT_OPTIONS = [
   { value: "OTHER", label: "Other" },
 ];
 
+const INVESTMENT_EXPERIENCE_OPTIONS = [
+  { value: "BEGINNER", label: "Beginner" },
+  { value: "INTERMEDIATE", label: "Intermediate" },
+  { value: "ADVANCED", label: "Advanced" },
+];
+
 const GOAL_OPTIONS = [
   { value: "RETIREMENT", label: "Retirement" },
   { value: "WEALTH_CREATION", label: "Wealth Creation" },
@@ -29,6 +35,12 @@ const GOAL_OPTIONS = [
   { value: "TRAVEL", label: "Travel" },
   { value: "EMERGENCY_FUND", label: "Emergency Fund" },
   { value: "OTHER", label: "Other" },
+];
+
+const GOAL_PRIORITY_OPTIONS = [
+  { value: "LOW", label: "Low" },
+  { value: "MEDIUM", label: "Medium" },
+  { value: "HIGH", label: "High" },
 ];
 
 const GOAL_FLEXIBILITY_OPTIONS = [
@@ -82,16 +94,27 @@ const CATEGORY_OPTIONS = [
   { value: "SILVER_ETFS", label: "Silver ETFs" },
   { value: "NIFTY_ETFS", label: "Nifty ETFs" },
   { value: "BANKING_ETFS", label: "Banking ETFs" },
+  { value: "FIXED_DEPOSITS", label: "Fixed Deposits" },
   { value: "OPEN_TO_ALL", label: "I'm open to all" },
 ];
 
 const emptyForms = {
-  1: { age: "", employmentStatus: "", monthlyIncome: "", monthlyExpense: "", currentSavings: "" },
+  1: {
+    age: "",
+    employmentStatus: "",
+    monthlyIncome: "",
+    monthlyExpense: "",
+    currentSavings: "",
+    dependents: "",
+    totalDebt: "",
+    investmentExperience: "",
+  },
   2: {
     primaryGoal: "",
     goalTargetAmount: "",
     goalTimeYears: "",
     goalFlexibility: "",
+    priority: "",
     hasMajorExpenseBeforeGoal: "",
     majorExpenseAmount: "",
     majorExpenseYear: "",
@@ -122,12 +145,16 @@ function buildFormsFromProfile(profile) {
       monthlyIncome: toFormValue(profile.monthlyIncome),
       monthlyExpense: toFormValue(profile.monthlyExpense),
       currentSavings: toFormValue(profile.currentSavings),
+      dependents: toFormValue(profile.dependents),
+      totalDebt: toFormValue(profile.totalDebt),
+      investmentExperience: toFormValue(profile.investmentExperience),
     },
     2: {
       primaryGoal: toFormValue(profile.primaryGoal),
       goalTargetAmount: toFormValue(profile.goalTargetAmount),
       goalTimeYears: toFormValue(profile.goalTimeYears),
       goalFlexibility: toFormValue(profile.goalFlexibility),
+      priority: toFormValue(profile.priority),
       hasMajorExpenseBeforeGoal:
         profile.hasMajorExpenseBeforeGoal === null || profile.hasMajorExpenseBeforeGoal === undefined
           ? ""
@@ -285,6 +312,9 @@ export default function FinancialProfile() {
           monthlyIncome: f.monthlyIncome,
           monthlyExpense: f.monthlyExpense,
           currentSavings: f.currentSavings,
+          dependents: f.dependents,
+          totalDebt: f.totalDebt,
+          investmentExperience: f.investmentExperience,
         };
       case 2: {
         const hasMajorExpense = f.hasMajorExpenseBeforeGoal === "true";
@@ -293,6 +323,7 @@ export default function FinancialProfile() {
           goalTargetAmount: f.goalTargetAmount,
           goalTimeYears: f.goalTimeYears,
           goalFlexibility: f.goalFlexibility,
+          priority: f.priority,
           hasMajorExpenseBeforeGoal: hasMajorExpense,
           majorExpenseAmount: hasMajorExpense ? f.majorExpenseAmount : null,
           majorExpenseYear: hasMajorExpense ? f.majorExpenseYear : null,
@@ -324,9 +355,24 @@ export default function FinancialProfile() {
     const f = forms[step];
     switch (step) {
       case 1:
-        return f.age !== "" && f.employmentStatus && f.monthlyIncome !== "" && f.monthlyExpense !== "" && f.currentSavings !== "";
+        return (
+          f.age !== "" &&
+          f.employmentStatus &&
+          f.monthlyIncome !== "" &&
+          f.monthlyExpense !== "" &&
+          f.currentSavings !== "" &&
+          f.dependents !== "" &&
+          f.totalDebt !== "" &&
+          f.investmentExperience
+        );
       case 2: {
-        const base = f.primaryGoal && f.goalTargetAmount !== "" && f.goalTimeYears !== "" && f.goalFlexibility && f.hasMajorExpenseBeforeGoal !== "";
+        const base =
+          f.primaryGoal &&
+          f.goalTargetAmount !== "" &&
+          f.goalTimeYears !== "" &&
+          f.goalFlexibility &&
+          f.priority &&
+          f.hasMajorExpenseBeforeGoal !== "";
         if (!base) return false;
         if (f.hasMajorExpenseBeforeGoal === "true") {
           return f.majorExpenseAmount !== "" && f.majorExpenseYear !== "";
@@ -553,6 +599,33 @@ function StepPersonalIncome({ form, update }) {
         value={form.currentSavings}
         onChange={(v) => update("currentSavings", v)}
       />
+
+      <div className="form-group">
+        <label className="form-label">How many dependents do you have?</label>
+        <input
+          type="number"
+          min="0"
+          className="form-input"
+          value={form.dependents}
+          placeholder="e.g. 0"
+          onChange={(e) => update("dependents", e.target.value)}
+        />
+      </div>
+
+      <AmountInput
+        label="What is your total outstanding debt?"
+        value={form.totalDebt}
+        onChange={(v) => update("totalDebt", v)}
+      />
+
+      <div className="form-group">
+        <label className="form-label">How would you describe your investment experience?</label>
+        <RadioPillGroup
+          options={INVESTMENT_EXPERIENCE_OPTIONS}
+          value={form.investmentExperience}
+          onChange={(v) => update("investmentExperience", v)}
+        />
+      </div>
     </div>
   );
 }
@@ -598,6 +671,15 @@ function StepGoal({ form, update }) {
           options={GOAL_FLEXIBILITY_OPTIONS}
           value={form.goalFlexibility}
           onChange={(v) => update("goalFlexibility", v)}
+        />
+      </div>
+
+      <div className="form-group">
+        <label className="form-label">How would you prioritize this goal?</label>
+        <RadioPillGroup
+          options={GOAL_PRIORITY_OPTIONS}
+          value={form.priority}
+          onChange={(v) => update("priority", v)}
         />
       </div>
 

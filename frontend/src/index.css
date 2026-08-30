@@ -1107,3 +1107,454 @@ a.primary-button.cta-button {
     padding: 22px;
   }
 }
+/* ---------------- GENERATED FINANCIAL PLAN ---------------- */
+
+.plan-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.plan-header-row .step-subtitle {
+  margin-bottom: 0;
+  max-width: 560px;
+}
+
+.plan-generate-button {
+  width: auto;
+  min-width: 165px;
+  padding: 0 22px;
+  flex-shrink: 0;
+}
+
+/* ---------- Empty State ---------- */
+
+.plan-empty-card,
+.plan-generating-card {
+  text-align: center;
+  padding: 52px 36px;
+}
+
+.plan-empty-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-size: 28px;
+}
+
+.plan-empty-card h3,
+.plan-generating-card h3 {
+  margin: 0 0 10px;
+  font-family: "Manrope", sans-serif;
+  font-size: 21px;
+}
+
+.plan-empty-card p,
+.plan-generating-card p {
+  max-width: 520px;
+  margin: 0 auto;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.plan-empty-button {
+  width: auto;
+  min-width: 180px;
+  padding: 0 24px;
+  margin-top: 24px;
+}
+
+/* ---------- Loading ---------- */
+
+.plan-loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.plan-loading-content p {
+  margin: 0;
+}
+
+.plan-loading-spinner {
+  width: 42px;
+  height: 42px;
+  border: 4px solid var(--primary-light);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: plan-spin 0.8s linear infinite;
+}
+
+.plan-generating-card .plan-loading-spinner {
+  margin: 0 auto 20px;
+}
+
+@keyframes plan-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Plan Sections ---------- */
+
+.plan-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.plan-card {
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: 0 8px 30px rgba(27, 52, 38, 0.04);
+}
+
+.plan-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.plan-card-eyebrow {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--primary);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.plan-card h3 {
+  margin: 0;
+  font-family: "Manrope", sans-serif;
+  font-size: 20px;
+  letter-spacing: -0.4px;
+}
+
+.plan-section-icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* ---------- Statistics ---------- */
+
+.plan-stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.plan-stat-row-large {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.plan-stat {
+  min-width: 0;
+  padding: 17px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: #fbfcfb;
+}
+
+.plan-stat-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.plan-stat-value {
+  display: block;
+  overflow-wrap: anywhere;
+  font-family: "Manrope", sans-serif;
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+/* ---------- Subheading ---------- */
+
+.plan-subheading {
+  margin: 26px 0 12px;
+  font-family: "Manrope", sans-serif;
+  font-size: 15px;
+}
+
+/* ---------- Dynamic Key Value ---------- */
+
+.dynamic-kv-list {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  overflow: hidden;
+}
+
+.dynamic-kv-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dynamic-kv-row:last-child {
+  border-bottom: 0;
+}
+
+.dynamic-kv-key {
+  flex-shrink: 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.dynamic-kv-value {
+  text-align: right;
+  overflow-wrap: anywhere;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* ---------- Feasibility ---------- */
+
+.feasibility-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 22px;
+  padding: 9px 13px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.feasibility-badge.feasible {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.feasibility-badge.not-feasible {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.feasibility-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ---------- Instruments ---------- */
+
+.dynamic-category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.dynamic-category {
+  padding-top: 2px;
+}
+
+.dynamic-category-title {
+  margin: 0 0 12px;
+  font-family: "Manrope", sans-serif;
+  font-size: 14px;
+}
+
+.instrument-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.dynamic-instrument-card {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fbfcfb;
+}
+
+.dynamic-instrument-card .dynamic-kv-list {
+  background: white;
+}
+
+/* ---------- Dividers ---------- */
+
+.plan-divider {
+  height: 1px;
+  margin: 28px 0;
+  background: var(--border);
+}
+
+/* ---------- Plan Options ---------- */
+
+.plan-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.plan-option-card {
+  position: relative;
+  padding-left: 58px;
+}
+
+.plan-option-number {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* ---------- Warnings ---------- */
+
+.plan-warning-box {
+  margin-top: 22px;
+  padding: 18px;
+  border: 1px solid #f0d7a1;
+  border-radius: 13px;
+  background: #fffaf0;
+}
+
+.plan-warning-box h4 {
+  margin: 0 0 9px;
+  font-family: "Manrope", sans-serif;
+  font-size: 14px;
+}
+
+.plan-warnings {
+  margin: 0;
+  padding-left: 20px;
+  color: #78613b;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.plan-warnings li + li {
+  margin-top: 5px;
+}
+
+/* ---------- Disclaimer ---------- */
+
+.plan-disclaimer {
+  margin-top: 18px;
+  padding: 16px;
+  border-left: 3px solid var(--border);
+  background: #fafcfb;
+}
+
+.plan-disclaimer strong {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 13px;
+}
+
+.plan-disclaimer p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+/* ---------- Metadata ---------- */
+
+.plan-generated-at {
+  margin: 2px 0 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+/* ---------- Empty ---------- */
+
+.plan-empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 800px) {
+  .plan-stat-row,
+  .plan-stat-row-large {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 650px) {
+  .plan-header-row {
+    flex-direction: column;
+  }
+
+  .plan-generate-button {
+    width: 100%;
+  }
+
+  .plan-card {
+    padding: 20px;
+  }
+
+  .plan-card-header {
+    margin-bottom: 20px;
+  }
+
+  .plan-stat-row,
+  .plan-stat-row-large {
+    grid-template-columns: 1fr;
+  }
+
+  .instrument-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dynamic-kv-row {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .dynamic-kv-value {
+    text-align: left;
+  }
+
+  .plan-empty-card,
+  .plan-generating-card {
+    padding: 38px 22px;
+  }
+}
