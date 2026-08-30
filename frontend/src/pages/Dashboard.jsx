@@ -1,11 +1,52 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import Sidebar from "../components/Sidebar";
+import { fetchFinancialProfile } from "../api/financialProfile";
 
-function Icon({ children }) {
-  return <span aria-hidden="true">{children}</span>;
+function formatINR(value) {
+  if (value === null || value === undefined || value === "") return "—";
+  return `₹${Number(value).toLocaleString("en-IN")}`;
+}
+
+function formatEnumLabel(value) {
+  if (!value) return "—";
+  return value
+    .toLowerCase()
+    .split("_")
+    .map((word) => word[0].toUpperCase() + word.slice(1))
+    .join(" ");
 }
 
 export default function Dashboard() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
+
+  const [loadingProfile, setLoadingProfile] = useState(true);
+  const [isComplete, setIsComplete] = useState(false);
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      try {
+        const { profile: p, isComplete: complete } = await fetchFinancialProfile();
+        if (cancelled) return;
+        setProfile(p);
+        setIsComplete(complete);
+      } catch {
+        // If this fails, default to the locked/incomplete state — safer
+        // than assuming the profile is done.
+      } finally {
+        if (!cancelled) setLoadingProfile(false);
+      }
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const firstName = user?.name?.split(" ")[0] || "there";
   const initials =
@@ -18,50 +59,7 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard-layout">
-      <aside className="sidebar">
-        <div className="brand">
-          <div className="brand-mark">₹</div>
-          Finance Planner
-        </div>
-
-        <nav className="sidebar-nav">
-          <a href="/dashboard" className="nav-item active">
-            <Icon>⌂</Icon>
-            Overview
-          </a>
-
-          <a href="#" className="nav-item">
-            <Icon>◫</Icon>
-            Income
-          </a>
-
-          <a href="#" className="nav-item">
-            <Icon>↘</Icon>
-            Expenses
-          </a>
-
-          <a href="#" className="nav-item">
-            <Icon>◎</Icon>
-            Goals
-          </a>
-
-          <a href="#" className="nav-item">
-            <Icon>◈</Icon>
-            Investments
-          </a>
-
-          <a href="#" className="nav-item">
-            <Icon>⚙</Icon>
-            Settings
-          </a>
-        </nav>
-
-        <div className="sidebar-bottom">
-          <button className="logout-button" onClick={logout}>
-            ↪ &nbsp; Log out
-          </button>
-        </div>
-      </aside>
+      <Sidebar active="overview" />
 
       <main className="dashboard-main">
         <header className="dashboard-header">
@@ -81,234 +79,181 @@ export default function Dashboard() {
             <p>Here's an overview of your financial journey.</p>
           </section>
 
-          <section className="stats-grid">
-            <div className="stat-card">
-              <div className="stat-card-top">
-                <span className="stat-title">Net worth</span>
-                <div className="stat-icon">₹</div>
+          {!loadingProfile && !isComplete && (
+            <section className="profile-cta-banner">
+              <div>
+                <h3>Complete your Financial Profile to unlock personalized plans.</h3>
+                <p>
+                  Answer a few quick questions about your income, goals, and risk appetite so we
+                  can tailor your financial plan.
+                </p>
               </div>
+              <Link to="/financial-profile" className="primary-button cta-button">
+                Complete Financial Profile →
+              </Link>
+            </section>
+          )}
 
-              <div className="stat-value">₹8,45,000</div>
-              <div className="stat-change">↑ 8.4% from last month</div>
-            </div>
-
-            <div className="stat-card">
-              <div className="stat-card-top">
-                <span className="stat-title">Monthly income</span>
-                <div className="stat-icon">↗</div>
+          {!loadingProfile && isComplete && (
+            <section className="profile-cta-banner profile-cta-banner--done">
+              <div>
+                <h3>✓ Financial Profile complete</h3>
+                <p>
+                  Your personalized AI financial plan will appear here once the planning engine is
+                  connected.
+                </p>
               </div>
+              <Link to="/financial-profile" className="secondary-button cta-button">
+                Review your answers
+              </Link>
+            </section>
+          )}
 
-              <div className="stat-value">₹75,000</div>
-              <div className="stat-change">↑ 4.2% this month</div>
-            </div>
-
-            <div className="stat-card">
-              <div className="stat-card-top">
-                <span className="stat-title">Monthly expenses</span>
-                <div className="stat-icon">↘</div>
-              </div>
-
-              <div className="stat-value">₹42,500</div>
-              <div className="stat-change">↓ 6.8% from last month</div>
-            </div>
-          </section>
-
-          <section className="dashboard-grid">
-            <div className="panel">
-              <div className="panel-header">
-                <h3>Financial health</h3>
-                <span>Updated today</span>
-              </div>
-
-              <div className="health-score">
-                <div className="score-circle">
-                  <span className="score-number">82</span>
-                </div>
-
-                <div className="health-copy">
-                  <h4>You're doing great</h4>
-                  <p>
-                    Your savings and spending habits are moving
-                    in the right direction.
-                  </p>
-                </div>
-              </div>
-
-              <div className="progress-list">
-                <div className="progress-row">
-                  <div className="progress-label">
-                    <span>Savings rate</span>
-                    <span>68%</span>
-                  </div>
-
-                  <div className="progress-bar">
-                    <div
-                      className="progress-fill"
-                      style={{ width: "68%" }}
-                    />
-                  </div>
-                </div>
-
-                <div className="progress-row">
-                  <div className="progress-label">
-                    <span>Emergency fund</span>
-                    <span>53%</span>
-                  </div>
-
-                  <div className="progress-bar">
-                    <div
-                      className="progress-fill"
-                      style={{ width: "53%" }}
-                    />
-                  </div>
-                </div>
-
-                <div className="progress-row">
-                  <div className="progress-label">
-                    <span>Debt management</span>
-                    <span>91%</span>
-                  </div>
-
-                  <div className="progress-bar">
-                    <div
-                      className="progress-fill"
-                      style={{ width: "91%" }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="panel">
-              <div className="panel-header">
-                <h3>Your goals</h3>
-                <span>2 active</span>
-              </div>
-
-              <div className="goal-list">
-                <div className="goal">
-                  <div className="goal-top">
-                    <div>
-                      <div className="goal-name">Emergency Fund</div>
-                      <div className="goal-amount">
-                        ₹80,000 of ₹1,50,000
-                      </div>
-                    </div>
-
-                    <span className="goal-percent">53%</span>
-                  </div>
-
-                  <div className="progress-bar">
-                    <div
-                      className="progress-fill"
-                      style={{ width: "53%" }}
-                    />
-                  </div>
-                </div>
-
-                <div className="goal">
-                  <div className="goal-top">
-                    <div>
-                      <div className="goal-name">Buy a Car</div>
-                      <div className="goal-amount">
-                        ₹2,00,000 of ₹8,00,000
-                      </div>
-                    </div>
-
-                    <span className="goal-percent">25%</span>
-                  </div>
-
-                  <div className="progress-bar">
-                    <div
-                      className="progress-fill"
-                      style={{ width: "25%" }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="panel">
-              <div className="panel-header">
-                <h3>Quick actions</h3>
-              </div>
-
-              <div className="quick-actions">
-                <button className="quick-action">
-                  <strong>+ Add income</strong>
-                  <span>Record your earnings</span>
-                </button>
-
-                <button className="quick-action">
-                  <strong>− Add expense</strong>
-                  <span>Track your spending</span>
-                </button>
-
-                <button className="quick-action">
-                  <strong>◎ New goal</strong>
-                  <span>Create a financial goal</span>
-                </button>
-
-                <button className="quick-action">
-                  <strong>◈ View plan</strong>
-                  <span>Review your financial plan</span>
-                </button>
-              </div>
-            </div>
-
-            <div className="panel">
-              <div className="panel-header">
-                <h3>This month</h3>
-                <span>August 2026</span>
-              </div>
-
-              <div className="progress-list">
-                <div className="progress-row">
-                  <div className="progress-label">
-                    <span>Housing</span>
-                    <span>₹18,000</span>
-                  </div>
-
-                  <div className="progress-bar">
-                    <div
-                      className="progress-fill"
-                      style={{ width: "42%" }}
-                    />
-                  </div>
-                </div>
-
-                <div className="progress-row">
-                  <div className="progress-label">
-                    <span>Food & lifestyle</span>
-                    <span>₹9,500</span>
-                  </div>
-
-                  <div className="progress-bar">
-                    <div
-                      className="progress-fill"
-                      style={{ width: "23%" }}
-                    />
-                  </div>
-                </div>
-
-                <div className="progress-row">
-                  <div className="progress-label">
-                    <span>Transport</span>
-                    <span>₹5,000</span>
-                  </div>
-
-                  <div className="progress-bar">
-                    <div
-                      className="progress-fill"
-                      style={{ width: "12%" }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
+          {isComplete ? (
+            <ProfileSnapshot profile={profile} />
+          ) : (
+            <LockedSection loading={loadingProfile} />
+          )}
         </div>
       </main>
     </div>
+  );
+}
+
+// Shown once the Financial Profile is filled in. Uses only the user's own
+// submitted answers — never invented figures — as a placeholder until the
+// AI planning engine is connected.
+function ProfileSnapshot({ profile }) {
+  if (!profile) return null;
+
+  return (
+    <>
+      <section className="stats-grid">
+        <div className="stat-card">
+          <div className="stat-card-top">
+            <span className="stat-title">Monthly income</span>
+            <div className="stat-icon">↗</div>
+          </div>
+          <div className="stat-value">{formatINR(profile.monthlyIncome)}</div>
+        </div>
+
+        <div className="stat-card">
+          <div className="stat-card-top">
+            <span className="stat-title">Monthly expenses</span>
+            <div className="stat-icon">↘</div>
+          </div>
+          <div className="stat-value">{formatINR(profile.monthlyExpense)}</div>
+        </div>
+
+        <div className="stat-card">
+          <div className="stat-card-top">
+            <span className="stat-title">Current savings</span>
+            <div className="stat-icon">₹</div>
+          </div>
+          <div className="stat-value">{formatINR(profile.currentSavings)}</div>
+        </div>
+      </section>
+
+      <section className="dashboard-grid">
+        <div className="panel">
+          <div className="panel-header">
+            <h3>Your goal</h3>
+            <span>{formatEnumLabel(profile.primaryGoal)}</span>
+          </div>
+
+          <div className="goal-list">
+            <div className="goal">
+              <div className="goal-top">
+                <div>
+                  <div className="goal-name">{formatEnumLabel(profile.primaryGoal)}</div>
+                  <div className="goal-amount">
+                    Target {formatINR(profile.goalTargetAmount)} in {profile.goalTimeYears}{" "}
+                    {profile.goalTimeYears === 1 ? "year" : "years"}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="panel">
+          <div className="panel-header">
+            <h3>Investing capacity</h3>
+          </div>
+
+          <div className="progress-list">
+            <div className="progress-row">
+              <div className="progress-label">
+                <span>Monthly investment capacity</span>
+                <span>{formatINR(profile.monthlyInvestmentCapacity)}</span>
+              </div>
+            </div>
+            <div className="progress-row">
+              <div className="progress-label">
+                <span>Risk preference</span>
+                <span>{formatEnumLabel(profile.riskPreference)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="panel ai-placeholder-panel">
+          <div className="panel-header">
+            <h3>Your AI financial plan</h3>
+          </div>
+          <p className="ai-placeholder-copy">
+            We're working on connecting the AI planning engine. Once it's live, your
+            personalized recommendations will show up here.
+          </p>
+        </div>
+      </section>
+    </>
+  );
+}
+
+// Shown while the Financial Profile isn't complete yet — no fake numbers,
+// just a subtly blurred/locked preview of what's coming.
+function LockedSection({ loading }) {
+  return (
+    <section className="dashboard-grid locked-grid" aria-hidden={!loading}>
+      <div className="panel locked-panel">
+        <div className="lock-overlay">
+          <span className="lock-icon">🔒</span>
+          <span>Complete your profile to unlock</span>
+        </div>
+        <div className="panel-header">
+          <h3>Financial health</h3>
+          <span>Locked</span>
+        </div>
+        <div className="health-score">
+          <div className="score-circle placeholder-circle" />
+          <div className="health-copy">
+            <h4>Your score will appear here</h4>
+            <p>Based on your savings and spending habits.</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="panel locked-panel">
+        <div className="lock-overlay">
+          <span className="lock-icon">🔒</span>
+          <span>Complete your profile to unlock</span>
+        </div>
+        <div className="panel-header">
+          <h3>Your goals</h3>
+          <span>Locked</span>
+        </div>
+        <div className="goal-list">
+          <div className="goal">
+            <div className="goal-top">
+              <div>
+                <div className="goal-name">Goal progress</div>
+                <div className="goal-amount">Set once your profile is complete</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
