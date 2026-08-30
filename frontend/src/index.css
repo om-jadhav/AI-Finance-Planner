@@ -725,3 +725,385 @@ a {
     padding: 18px;
   }
 }
+
+.secondary-button {
+  height: 48px;
+  padding: 0 20px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: white;
+  color: var(--text);
+  font-weight: 700;
+  transition: 0.2s ease;
+}
+
+.secondary-button:hover:not(:disabled) {
+  border-color: #bfd3c5;
+  background: #fafcfb;
+}
+
+.secondary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ---------------- OVERVIEW: PROFILE CTA ---------------- */
+
+.profile-cta-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 26px 30px;
+  margin-bottom: 26px;
+  border-radius: 18px;
+  background: linear-gradient(120deg, #123c2b, #1f6f4a);
+  color: white;
+  box-shadow: var(--shadow);
+}
+
+.profile-cta-banner h3 {
+  margin: 0 0 7px;
+  font-family: "Manrope", sans-serif;
+  font-size: 19px;
+}
+
+.profile-cta-banner p {
+  margin: 0;
+  max-width: 520px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.profile-cta-banner--done {
+  background: white;
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 30px rgba(27, 52, 38, 0.04);
+}
+
+.profile-cta-banner--done p {
+  color: var(--muted);
+}
+
+.cta-button {
+  flex-shrink: 0;
+  width: auto;
+  padding: 0 22px;
+  white-space: nowrap;
+}
+
+a.primary-button.cta-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ai-placeholder-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ai-placeholder-copy {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* ---------------- OVERVIEW: LOCKED STATE ---------------- */
+
+.locked-panel {
+  position: relative;
+  overflow: hidden;
+  filter: blur(2.5px);
+  opacity: 0.6;
+  pointer-events: none;
+  user-select: none;
+}
+
+.locked-grid {
+  position: relative;
+}
+
+.lock-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  filter: none;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.lock-icon {
+  font-size: 22px;
+}
+
+.placeholder-circle {
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  background: #edf1ee;
+}
+
+/* ---------------- FINANCIAL PROFILE ONBOARDING ---------------- */
+
+.profile-page-content {
+  max-width: 900px;
+}
+
+.stepper {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 30px;
+}
+
+.stepper-item-wrap {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.stepper-item-wrap:last-child {
+  flex: 0;
+}
+
+.stepper-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.stepper-item:disabled {
+  cursor: not-allowed;
+}
+
+.stepper-item:not(:disabled) {
+  cursor: pointer;
+}
+
+.stepper-circle {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #edf1ee;
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 13px;
+  border: 2px solid transparent;
+  transition: 0.2s ease;
+}
+
+.stepper-item.active .stepper-circle {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  border-color: var(--primary);
+}
+
+.stepper-item.done .stepper-circle {
+  background: var(--primary);
+  color: white;
+}
+
+.stepper-label {
+  max-width: 96px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.stepper-item.active .stepper-label {
+  color: var(--text);
+}
+
+.stepper-connector {
+  flex: 1;
+  height: 2px;
+  margin: 0 6px 24px;
+  background: var(--border);
+}
+
+.stepper-connector.done {
+  background: var(--primary);
+}
+
+.profile-card {
+  padding: 32px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: white;
+  box-shadow: var(--shadow);
+}
+
+.profile-error {
+  margin-bottom: 22px;
+}
+
+.step-title {
+  margin: 0 0 6px;
+  font-family: "Manrope", sans-serif;
+  font-size: 24px;
+  letter-spacing: -0.5px;
+}
+
+.step-subtitle {
+  margin: 0 0 26px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.step-body .form-group {
+  margin-bottom: 24px;
+}
+
+.pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.pill-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fbfcfb;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  transition: 0.15s ease;
+}
+
+.pill-option:hover {
+  border-color: #bfd3c5;
+}
+
+.pill-option.selected {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.pill-check {
+  font-size: 11px;
+}
+
+.input-prefix {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.amount-input {
+  padding-left: 30px;
+}
+
+.conditional-fields {
+  padding: 18px 18px 4px;
+  margin: -6px 0 24px;
+  border-radius: 12px;
+  background: #f8faf8;
+  border: 1px solid var(--border);
+}
+
+.step-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);
+}
+
+.step-save-button {
+  width: auto;
+  padding: 0 26px;
+}
+
+.profile-complete-card {
+  text-align: center;
+  padding: 56px 40px;
+}
+
+.complete-badge {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.profile-complete-card h2 {
+  margin: 0 0 10px;
+  font-family: "Manrope", sans-serif;
+  font-size: 24px;
+}
+
+.profile-complete-card p {
+  margin: 0 auto 26px;
+  max-width: 460px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.complete-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.complete-link {
+  width: auto;
+  padding: 0 24px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ---------------- FINANCIAL PROFILE RESPONSIVE ---------------- */
+
+@media (max-width: 650px) {
+  .profile-cta-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cta-button {
+    width: 100%;
+  }
+
+  .stepper-label {
+    display: none;
+  }
+
+  .profile-card {
+    padding: 22px;
+  }
+}
