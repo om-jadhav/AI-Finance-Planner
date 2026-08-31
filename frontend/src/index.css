@@ -1405,6 +1405,59 @@ a.primary-button.cta-button {
   background: white;
 }
 
+.instrument-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.instrument-name {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.instrument-score {
+  flex-shrink: 0;
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.instrument-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.instrument-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.instrument-metric-label {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.instrument-metric-value {
+  font-family: "Manrope", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
 /* ---------- Dividers ---------- */
 
 .plan-divider {
@@ -1439,6 +1492,95 @@ a.primary-button.cta-button {
   color: var(--primary-dark);
   font-size: 12px;
   font-weight: 800;
+}
+
+.plan-option-body {
+  min-width: 0;
+}
+
+.plan-option-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.plan-option-variant {
+  margin: 0;
+  font-family: "Manrope", sans-serif;
+  font-size: 17px;
+  letter-spacing: -0.2px;
+}
+
+.plan-option-return {
+  flex-shrink: 0;
+  color: var(--primary-dark);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.plan-option-reasoning {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.plan-allocation-table {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  background: #f8faf8;
+  border: 1px solid var(--border);
+}
+
+.plan-allocation-row {
+  display: grid;
+  grid-template-columns: 46px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.plan-allocation-row:not(:last-child) {
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.plan-allocation-percent {
+  font-family: "Manrope", sans-serif;
+  font-weight: 800;
+  color: var(--primary-dark);
+}
+
+.plan-allocation-instrument {
+  font-weight: 600;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.plan-allocation-category {
+  flex-shrink: 0;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  text-align: right;
+}
+
+.plan-option-goal-alignment {
+  margin: 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
 }
 
 /* ---------- Warnings ---------- */
@@ -1556,5 +1698,24 @@ a.primary-button.cta-button {
   .plan-empty-card,
   .plan-generating-card {
     padding: 38px 22px;
+  }
+
+  .plan-option-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .plan-allocation-row {
+    grid-template-columns: 40px 1fr;
+  }
+
+  .plan-allocation-category {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+
+  .instrument-metrics {
+    grid-template-columns: 1fr 1fr;
   }
 }

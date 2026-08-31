@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Sidebar from "../components/Sidebar";
 import { fetchFinancialProfile } from "../api/financialProfile";
+import { fetchLatestPlan } from "../api/plan";
 
 function formatINR(value) {
   if (value === null || value === undefined || value === "") return "—";
@@ -25,6 +26,9 @@ export default function Dashboard() {
   const [isComplete, setIsComplete] = useState(false);
   const [profile, setProfile] = useState(null);
 
+  const [loadingPlan, setLoadingPlan] = useState(true);
+  const [latestPlan, setLatestPlan] = useState(null);
+
   useEffect(() => {
     let cancelled = false;
 
@@ -43,6 +47,27 @@ export default function Dashboard() {
     }
 
     load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadPlan() {
+      try {
+        const p = await fetchLatestPlan();
+        if (!cancelled) setLatestPlan(p);
+      } catch {
+        // No plan yet, or fetch failed — the panel just shows the
+        // "generate a plan" prompt either way.
+      } finally {
+        if (!cancelled) setLoadingPlan(false);
+      }
+    }
+
+    loadPlan();
     return () => {
       cancelled = true;
     };
@@ -99,8 +124,9 @@ export default function Dashboard() {
               <div>
                 <h3>✓ Financial Profile complete</h3>
                 <p>
-                  Your personalized AI financial plan will appear here once the planning engine is
-                  connected.
+                  {latestPlan
+                    ? "Your AI financial plan is ready — see the summary below or view the full breakdown."
+                    : "Generate your AI financial plan to see personalized recommendations."}
                 </p>
               </div>
               <Link to="/financial-profile" className="secondary-button cta-button">
@@ -110,7 +136,7 @@ export default function Dashboard() {
           )}
 
           {isComplete ? (
-            <ProfileSnapshot profile={profile} />
+            <ProfileSnapshot profile={profile} latestPlan={latestPlan} loadingPlan={loadingPlan} />
           ) : (
             <LockedSection loading={loadingProfile} />
           )}
@@ -121,9 +147,8 @@ export default function Dashboard() {
 }
 
 // Shown once the Financial Profile is filled in. Uses only the user's own
-// submitted answers — never invented figures — as a placeholder until the
-// AI planning engine is connected.
-function ProfileSnapshot({ profile }) {
+// submitted answers — never invented figures.
+function ProfileSnapshot({ profile, latestPlan, loadingPlan }) {
   if (!profile) return null;
 
   return (
@@ -197,17 +222,98 @@ function ProfileSnapshot({ profile }) {
           </div>
         </div>
 
-        <div className="panel ai-placeholder-panel">
-          <div className="panel-header">
-            <h3>Your AI financial plan</h3>
-          </div>
-          <p className="ai-placeholder-copy">
-            We're working on connecting the AI planning engine. Once it's live, your
-            personalized recommendations will show up here.
-          </p>
-        </div>
+        <PlanPreviewPanel latestPlan={latestPlan} loadingPlan={loadingPlan} />
       </section>
     </>
+  );
+}
+
+// Compact preview of the most recently generated AI plan. Shows all
+// generated variants (Conservative/Moderate/Aggressive) as compact tiles
+// in a row, spanning the full dashboard-grid width. Clicking any tile or
+// the button takes the user to /plan for the full breakdown.
+function PlanPreviewPanel({ latestPlan, loadingPlan }) {
+  const response = latestPlan?.response;
+  const plans = response?.plan?.plans ?? [];
+
+  return (
+    <div className="panel" style={{ gridColumn: "1 / -1" }}>
+      <div className="panel-header">
+        <h3>Your AI financial plan</h3>
+        {latestPlan?.createdAt && (
+          <span>{new Date(latestPlan.createdAt).toLocaleDateString()}</span>
+        )}
+      </div>
+
+      {loadingPlan ? (
+        <p className="ai-placeholder-copy">Loading your plan...</p>
+      ) : !response ? (
+        <>
+          <p className="ai-placeholder-copy">
+            Generate your personalized AI financial plan based on your income, goals, and risk
+            profile.
+          </p>
+          <Link to="/plan" className="primary-button cta-button" style={{ marginTop: 16 }}>
+            Generate Plan →
+          </Link>
+        </>
+      ) : (
+        <>
+          <div
+            className={`feasibility-badge ${
+              response.feasibility?.goal_feasible ? "feasible" : "not-feasible"
+            }`}
+          >
+            <span className="feasibility-dot" />
+            <span>{response.feasibility?.goal_feasible ? "On track" : "Needs adjustment"}</span>
+          </div>
+
+          <div className="goal-list" style={{ marginBottom: 14 }}>
+            <div className="goal">
+              <div className="goal-top">
+                <div>
+                  <div className="goal-name">Risk Profile</div>
+                  <div className="goal-amount">
+                    {response.risk_profile?.risk_category ?? "—"}
+                  </div>
+                </div>
+                <div className="goal-percent">{response.risk_profile?.risk_score ?? "—"}</div>
+              </div>
+            </div>
+          </div>
+
+          {plans.length > 0 && (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: `repeat(${plans.length}, 1fr)`,
+                gap: 14,
+                marginBottom: 16,
+              }}
+            >
+              {plans.map((p, idx) => (
+                <Link to="/plan" key={idx} className="goal" style={{ display: "block" }}>
+                  <div className="goal-top">
+                    <div>
+                      <div className="goal-name">{p.variant}</div>
+                      <div className="goal-amount">{p.expected_annual_return}% return</div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+
+          <Link
+            to="/plan"
+            className="secondary-button cta-button"
+            style={{ width: "100%" }}
+          >
+            View full plan →
+          </Link>
+        </>
+      )}
+    </div>
   );
 }
 
