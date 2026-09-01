@@ -33,48 +33,48 @@ function DynamicKeyValue({ data }) {
 // { score, instrument, sharpe_ratio, maximum_drawdown_pct,
 //   annualized_volatility_pct, annualized_return_cagr_pct }
 // sharpe_ratio is null for fixed-income instruments (PPF, FD) — shown as "—".
-function InstrumentCard({ instrument }) {
-  return (
-    <div className="dynamic-instrument-card">
-      <div className="instrument-card-header">
-        <span className="instrument-name">{formatInstrumentName(instrument.instrument)}</span>
-        <span className="instrument-score">Score {formatDecimal(instrument.score)}</span>
-      </div>
+// function InstrumentCard({ instrument }) {
+//   return (
+//     <div className="dynamic-instrument-card">
+//       <div className="instrument-card-header">
+//         <span className="instrument-name">{formatInstrumentName(instrument.instrument)}</span>
+//         <span className="instrument-score">Score {formatDecimal(instrument.score)}</span>
+//       </div>
 
-      <div className="instrument-metrics">
-        <div className="instrument-metric">
-          <span className="instrument-metric-label">CAGR</span>
-          <span className="instrument-metric-value">
-            {formatPercentValue(instrument.annualized_return_cagr_pct)}
-          </span>
-        </div>
+//       <div className="instrument-metrics">
+//         <div className="instrument-metric">
+//           <span className="instrument-metric-label">CAGR</span>
+//           <span className="instrument-metric-value">
+//             {formatPercentValue(instrument.annualized_return_cagr_pct)}
+//           </span>
+//         </div>
 
-        <div className="instrument-metric">
-          <span className="instrument-metric-label">Volatility</span>
-          <span className="instrument-metric-value">
-            {formatPercentValue(instrument.annualized_volatility_pct)}
-          </span>
-        </div>
+//         <div className="instrument-metric">
+//           <span className="instrument-metric-label">Volatility</span>
+//           <span className="instrument-metric-value">
+//             {formatPercentValue(instrument.annualized_volatility_pct)}
+//           </span>
+//         </div>
 
-        <div className="instrument-metric">
-          <span className="instrument-metric-label">Max Drawdown</span>
-          <span className="instrument-metric-value">
-            {formatPercentValue(instrument.maximum_drawdown_pct)}
-          </span>
-        </div>
+//         <div className="instrument-metric">
+//           <span className="instrument-metric-label">Max Drawdown</span>
+//           <span className="instrument-metric-value">
+//             {formatPercentValue(instrument.maximum_drawdown_pct)}
+//           </span>
+//         </div>
 
-        <div className="instrument-metric">
-          <span className="instrument-metric-label">Sharpe Ratio</span>
-          <span className="instrument-metric-value">
-            {instrument.sharpe_ratio === null || instrument.sharpe_ratio === undefined
-              ? "—"
-              : formatDecimal(instrument.sharpe_ratio)}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
+//         <div className="instrument-metric">
+//           <span className="instrument-metric-label">Sharpe Ratio</span>
+//           <span className="instrument-metric-value">
+//             {instrument.sharpe_ratio === null || instrument.sharpe_ratio === undefined
+//               ? "—"
+//               : formatDecimal(instrument.sharpe_ratio)}
+//           </span>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
 
 // Renders category -> instruments returned by AI.
 // Example:
@@ -82,35 +82,35 @@ function InstrumentCard({ instrument }) {
 //   stocks: [ {...}, {...} ],
 //   fixed_income: [ {...} ]
 // }
-function DynamicCategoryList({ data }) {
-  if (!data || typeof data !== "object") return null;
+// function DynamicCategoryList({ data }) {
+//   if (!data || typeof data !== "object") return null;
 
-  const entries = Object.entries(data);
+//   const entries = Object.entries(data);
 
-  if (entries.length === 0) {
-    return <p className="plan-empty">No recommendations yet.</p>;
-  }
+//   if (entries.length === 0) {
+//     return <p className="plan-empty">No recommendations yet.</p>;
+//   }
 
-  return (
-    <div className="dynamic-category-list">
-      {entries.map(([category, items]) => (
-        <div className="dynamic-category" key={category}>
-          <h4 className="dynamic-category-title">{formatLabel(category)}</h4>
+//   return (
+//     <div className="dynamic-category-list">
+//       {entries.map(([category, items]) => (
+//         <div className="dynamic-category" key={category}>
+//           <h4 className="dynamic-category-title">{formatLabel(category)}</h4>
 
-          {Array.isArray(items) && items.length > 0 ? (
-            <div className="instrument-grid">
-              {items.map((item, idx) => (
-                <InstrumentCard instrument={item} key={idx} />
-              ))}
-            </div>
-          ) : (
-            <p className="plan-empty">None suggested.</p>
-          )}
-        </div>
-      ))}
-    </div>
-  );
-}
+//           {Array.isArray(items) && items.length > 0 ? (
+//             <div className="instrument-grid">
+//               {items.map((item, idx) => (
+//                 <InstrumentCard instrument={item} key={idx} />
+//               ))}
+//             </div>
+//           ) : (
+//             <p className="plan-empty">None suggested.</p>
+//           )}
+//         </div>
+//       ))}
+//     </div>
+//   );
+// }
 
 // One plan variant, e.g.
 // { variant, reasoning, allocation: [{percent, category, instrument}],
@@ -387,13 +387,13 @@ export default function GeneratedPlan() {
                   </div>
                 </div>
 
-                {response.risk_profile?.factor_breakdown && (
+                {/* {response.risk_profile?.factor_breakdown && (
                   <>
                     <h4 className="plan-subheading">Risk Factor Breakdown</h4>
 
                     <DynamicKeyValue data={response.risk_profile.factor_breakdown} />
                   </>
-                )}
+                )} */}
               </section>
 
               {/* GOAL FEASIBILITY */}
@@ -409,9 +409,8 @@ export default function GeneratedPlan() {
                 </div>
 
                 <div
-                  className={`feasibility-badge ${
-                    response.feasibility?.goal_feasible ? "feasible" : "not-feasible"
-                  }`}
+                  className={`feasibility-badge ${response.feasibility?.goal_feasible ? "feasible" : "not-feasible"
+                    }`}
                 >
                   <span className="feasibility-dot" />
 
@@ -494,12 +493,6 @@ export default function GeneratedPlan() {
                 </div>
 
                 <DynamicKeyValue data={response.portfolio?.allocation} />
-
-                <div className="plan-divider" />
-
-                <h4 className="plan-subheading">Recommended Instruments</h4>
-
-                <DynamicCategoryList data={response.portfolio?.recommended_instruments} />
               </section>
 
               {/* PLAN OPTIONS */}

@@ -124,9 +124,43 @@ def calculate_risk_profile(
     score += points
     factors["dependents"] = points
 
-    # Questionnaire contribution.
+    # Employment status — income stability signal.
+    # Stable income (Salaried/Retired) supports slightly
+    # more risk tolerance than unstable/variable income
+    # (Self-employed/Business owner/Student), since the
+    # latter have less predictable cash flow to absorb
+    # a market downturn without needing to sell.
+    employment_status = str(
+        profile.get(
+            "employment_status",
+            "Salaried",
+        )
+    ).lower()
+
+    stable_statuses = {"salaried", "retired"}
+    unstable_statuses = {
+        "self_employed", "self-employed",
+        "business_owner", "business owner",
+        "student",
+    }
+
+    if employment_status in stable_statuses:
+        points = 5
+    elif employment_status in unstable_statuses:
+        points = 0
+    else:
+        points = 2  # "Other" or unrecognized — neutral
+
+    score += points
+    factors["employment_stability"] = points
+
+    # Questionnaire contribution. Answers may arrive as
+    # enum-style strings (e.g. "HOLD_AND_WAIT",
+    # "BALANCE_SAFETY_GROWTH") from the frontend, not plain
+    # phrases — normalize underscores/hyphens to spaces
+    # before matching so both formats work.
     answers_text = " ".join(
-        str(value).lower()
+        str(value).lower().replace("_", " ").replace("-", " ")
         for value in risk_answers.values()
     )
 
@@ -136,12 +170,16 @@ def calculate_risk_profile(
         "long term",
         "market fall",
         "buy more",
+        "invest more",
+        "ten years",  # "10+ years" horizon phrasing variants
     ]
 
     moderate_words = [
         "moderate",
         "balanced",
+        "balance safety growth",
         "some risk",
+        "hold and wait",
     ]
 
     if any(
