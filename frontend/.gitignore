@@ -47,3 +47,4 @@ temp/
 
 # Cache
 .eslintcache
+.DS_Store

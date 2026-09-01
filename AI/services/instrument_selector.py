@@ -184,7 +184,7 @@ def select_instruments(
             dummy_fixed_income, limit=2
         ),
         "mutual_funds": select_top_assets(
-            dummy_mutual_funds, limit=3
+            dummy_mutual_funds, limit=4
         ),
     }
 
