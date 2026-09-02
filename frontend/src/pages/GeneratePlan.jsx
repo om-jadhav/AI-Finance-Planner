@@ -275,6 +275,8 @@ export default function GeneratedPlan() {
   }
 
   const response = plan?.response;
+  const goalFeasible =
+  response?.feasibility?.goal_feasible ?? true;
 
   return (
     <div className="dashboard-layout">
@@ -484,14 +486,35 @@ export default function GeneratedPlan() {
                   <div className="plan-section-icon">◎</div>
                 </div>
 
-                {Array.isArray(response.plan?.plans) && response.plan.plans.length > 0 ? (
-                  <div className="plan-options-list">
-                    {response.plan.plans.map((p, idx) => (
-                      <PlanOptionCard plan={p} index={idx} key={idx} />
-                    ))}
-                  </div>
+                {goalFeasible ? (
+                  Array.isArray(response.plan?.plans) &&
+                  response.plan.plans.length > 0 ? (
+                    <div className="plan-options-list">
+                      {response.plan.plans.map((p, idx) => (
+                        <PlanOptionCard plan={p} index={idx} key={idx} />
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="plan-empty">No plan options returned.</p>
+                  )
                 ) : (
-                  <p className="plan-empty">No plan options returned.</p>
+                  <div className="goal-suggestions">
+                    <h4>How you can make this goal achievable</h4>
+
+                    {response.goal_suggestions?.suggestions?.map((item, index) => (
+                      <div key={index} className="goal-suggestion-card">
+                        <strong>{item.title}</strong>
+                        <p>{item.description}</p>
+                      </div>
+                    ))}
+
+                    {response.goal_suggestions?.explanation && (
+                      <div className="goal-explanation">
+                        <h4>AI Explanation</h4>
+                        <p>{response.goal_suggestions.explanation}</p>
+                      </div>
+                    )}
+                  </div>
                 )}
 
                 {response.plan?.warnings?.length > 0 && (
