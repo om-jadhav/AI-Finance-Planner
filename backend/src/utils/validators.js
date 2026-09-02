@@ -19,7 +19,7 @@ const loginSchema = z.object({
 const money = (label) => z.coerce.number().min(0, `${label} can't be negative`);
 
 const personalIncomeSchema = z.object({
-  age: z.coerce.number().int().min(1, "Enter a valid age").max(120, "Enter a valid age"),
+  age: z.coerce.number().int().min(18, "Minimum age for making investments is 18 years").max(120, "Enter a valid age"),
   employmentStatus: z.enum([
     "SALARIED",
     "SELF_EMPLOYED",
@@ -73,8 +73,9 @@ const goalSchema = z
 
 const investmentCapacitySchema = z
   .object({
-    monthlyInvestmentCapacity: money("Monthly investment amount"),
-    hasExistingInvestments: z.boolean(),
+    monthlyInvestmentCapacity: z.coerce
+      .number()
+      .min(500, "Minimum monthly investment amount is ₹500"), hasExistingInvestments: z.boolean(),
     existingInvestmentTypes: z
       .array(
         z.enum(["STOCKS", "MUTUAL_FUNDS", "GOLD", "ETFS", "FIXED_DEPOSITS", "BONDS", "OTHER"])
@@ -122,11 +123,11 @@ const investmentPreferencesSchema = z.object({
       z.enum([
         "MUTUAL_FUNDS",
         "STOCKS",
-        "GOLD",
         "GOLD_ETFS",
         "SILVER_ETFS",
         "NIFTY_ETFS",
         "BANKING_ETFS",
+        "FIXED_DEPOSITS",
         "OPEN_TO_ALL",
       ])
     )
