@@ -8,6 +8,58 @@ const sliderBg = (val, min, max) => {
   return `linear-gradient(to right, #1f6f4a 0%, #1f6f4a ${p}%, #d9dce6 ${p}%, #d9dce6 100%)`;
 };
 
+// ─── Reusable slider + typeable number field ─────────────
+// Lets the value be set either by dragging the range slider
+// or by typing directly into the pill next to the label.
+const SliderField = ({ label, value, min, max, step, onChange, prefix = '', suffix = '', minLabel, maxLabel, inputWidth = 70 }) => {
+  const [text, setText] = useState(String(value));
+
+  // Keep the typed text in sync when the slider (or another control) changes the value.
+  useEffect(() => {
+    setText(String(value));
+  }, [value]);
+
+  const commit = (raw) => {
+    let num = parseFloat(raw);
+    if (isNaN(num)) num = min;
+    num = Math.min(max, Math.max(min, num));
+    onChange(num);
+    setText(String(num));
+  };
+
+  return (
+    <div className="slider-group">
+      <div className="slider-label-row">
+        <label>{label}</label>
+        <div className="slider-input-group">
+          {prefix && <span className="io-affix">{prefix}</span>}
+          <input
+            type="number"
+            className="slider-number-input"
+            style={{ width: inputWidth }}
+            value={text}
+            step={step}
+            onChange={(e) => setText(e.target.value)}
+            onBlur={(e) => commit(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') e.target.blur(); }}
+          />
+          {suffix && <span className="io-affix">{suffix}</span>}
+        </div>
+      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        style={{ background: sliderBg(value, min, max) }}
+        onChange={(e) => onChange(Number(e.target.value))}
+      />
+      <div className="slider-minmax"><span>{minLabel}</span><span>{maxLabel}</span></div>
+    </div>
+  );
+};
+
 const CalculatorPage = () => {
   const navigate = useNavigate();
 
@@ -146,38 +198,30 @@ const CalculatorPage = () => {
             <span className="badge">Systematic Investment</span>
           </div>
 
-          <div className="slider-group">
-            <div className="slider-label-row">
-              <label>Monthly Investment</label>
-              <span className="slider-value">₹{sipMonthly.toLocaleString('en-IN')}</span>
-            </div>
-            <input type="range" min="500" max="100000" step="500" value={sipMonthly}
-              style={{ background: sliderBg(sipMonthly, 500, 100000) }}
-              onChange={(e) => setSipMonthly(Number(e.target.value))} />
-            <div className="slider-minmax"><span>₹500</span><span>₹1,00,000</span></div>
-          </div>
-
-          <div className="slider-group">
-            <div className="slider-label-row">
-              <label>Expected Return</label>
-              <span className="slider-value">{sipReturn}% p.a.</span>
-            </div>
-            <input type="range" min="1" max="30" step="0.5" value={sipReturn}
-              style={{ background: sliderBg(sipReturn, 1, 30) }}
-              onChange={(e) => setSipReturn(Number(e.target.value))} />
-            <div className="slider-minmax"><span>1%</span><span>30%</span></div>
-          </div>
-
-          <div className="slider-group">
-            <div className="slider-label-row">
-              <label>Tenure</label>
-              <span className="slider-value">{sipYears} years</span>
-            </div>
-            <input type="range" min="1" max="30" step="1" value={sipYears}
-              style={{ background: sliderBg(sipYears, 1, 30) }}
-              onChange={(e) => setSipYears(Number(e.target.value))} />
-            <div className="slider-minmax"><span>1 yr</span><span>30 yrs</span></div>
-          </div>
+          <SliderField
+            label="Monthly Investment"
+            value={sipMonthly}
+            min={500} max={100000} step={500}
+            onChange={setSipMonthly}
+            prefix="₹" inputWidth={90}
+            minLabel="₹500" maxLabel="₹1,00,000"
+          />
+          <SliderField
+            label="Expected Return"
+            value={sipReturn}
+            min={1} max={30} step={0.5}
+            onChange={setSipReturn}
+            suffix="%" inputWidth={55}
+            minLabel="1%" maxLabel="30%"
+          />
+          <SliderField
+            label="Tenure"
+            value={sipYears}
+            min={1} max={30} step={1}
+            onChange={setSipYears}
+            suffix="yrs" inputWidth={55}
+            minLabel="1 yr" maxLabel="30 yrs"
+          />
         </div>
 
         <div className="card result-panel">
@@ -241,38 +285,30 @@ const CalculatorPage = () => {
             <span className="badge">Systematic Withdrawal</span>
           </div>
 
-          <div className="slider-group">
-            <div className="slider-label-row">
-              <label>Monthly Withdrawal</label>
-              <span className="slider-value">₹{swpMonthly.toLocaleString('en-IN')}</span>
-            </div>
-            <input type="range" min="1000" max="100000" step="500" value={swpMonthly}
-              style={{ background: sliderBg(swpMonthly, 1000, 100000) }}
-              onChange={(e) => setSwpMonthly(Number(e.target.value))} />
-            <div className="slider-minmax"><span>₹1,000</span><span>₹1,00,000</span></div>
-          </div>
-
-          <div className="slider-group">
-            <div className="slider-label-row">
-              <label>Expected Return</label>
-              <span className="slider-value">{swpReturn}% p.a.</span>
-            </div>
-            <input type="range" min="1" max="25" step="0.5" value={swpReturn}
-              style={{ background: sliderBg(swpReturn, 1, 25) }}
-              onChange={(e) => setSwpReturn(Number(e.target.value))} />
-            <div className="slider-minmax"><span>1%</span><span>25%</span></div>
-          </div>
-
-          <div className="slider-group">
-            <div className="slider-label-row">
-              <label>Tenure</label>
-              <span className="slider-value">{swpYears} years</span>
-            </div>
-            <input type="range" min="1" max="30" step="1" value={swpYears}
-              style={{ background: sliderBg(swpYears, 1, 30) }}
-              onChange={(e) => setSwpYears(Number(e.target.value))} />
-            <div className="slider-minmax"><span>1 yr</span><span>30 yrs</span></div>
-          </div>
+          <SliderField
+            label="Monthly Withdrawal"
+            value={swpMonthly}
+            min={1000} max={100000} step={500}
+            onChange={setSwpMonthly}
+            prefix="₹" inputWidth={90}
+            minLabel="₹1,000" maxLabel="₹1,00,000"
+          />
+          <SliderField
+            label="Expected Return"
+            value={swpReturn}
+            min={1} max={25} step={0.5}
+            onChange={setSwpReturn}
+            suffix="%" inputWidth={55}
+            minLabel="1%" maxLabel="25%"
+          />
+          <SliderField
+            label="Tenure"
+            value={swpYears}
+            min={1} max={30} step={1}
+            onChange={setSwpYears}
+            suffix="yrs" inputWidth={55}
+            minLabel="1 yr" maxLabel="30 yrs"
+          />
         </div>
 
         <div className="card result-panel">
@@ -310,38 +346,30 @@ const CalculatorPage = () => {
             <span className="badge">Loan Installment</span>
           </div>
 
-          <div className="slider-group">
-            <div className="slider-label-row">
-              <label>Loan Amount</label>
-              <span className="slider-value">₹{emiLoan.toLocaleString('en-IN')}</span>
-            </div>
-            <input type="range" min="10000" max="5000000" step="10000" value={emiLoan}
-              style={{ background: sliderBg(emiLoan, 10000, 5000000) }}
-              onChange={(e) => setEmiLoan(Number(e.target.value))} />
-            <div className="slider-minmax"><span>₹10,000</span><span>₹50,00,000</span></div>
-          </div>
-
-          <div className="slider-group">
-            <div className="slider-label-row">
-              <label>Interest Rate</label>
-              <span className="slider-value">{emiRate}% p.a.</span>
-            </div>
-            <input type="range" min="1" max="24" step="0.5" value={emiRate}
-              style={{ background: sliderBg(emiRate, 1, 24) }}
-              onChange={(e) => setEmiRate(Number(e.target.value))} />
-            <div className="slider-minmax"><span>1%</span><span>24%</span></div>
-          </div>
-
-          <div className="slider-group">
-            <div className="slider-label-row">
-              <label>Tenure</label>
-              <span className="slider-value">{emiMonths} months</span>
-            </div>
-            <input type="range" min="6" max="360" step="6" value={emiMonths}
-              style={{ background: sliderBg(emiMonths, 6, 360) }}
-              onChange={(e) => setEmiMonths(Number(e.target.value))} />
-            <div className="slider-minmax"><span>6 mo</span><span>360 mo</span></div>
-          </div>
+          <SliderField
+            label="Loan Amount"
+            value={emiLoan}
+            min={10000} max={5000000} step={10000}
+            onChange={setEmiLoan}
+            prefix="₹" inputWidth={100}
+            minLabel="₹10,000" maxLabel="₹50,00,000"
+          />
+          <SliderField
+            label="Interest Rate"
+            value={emiRate}
+            min={1} max={24} step={0.5}
+            onChange={setEmiRate}
+            suffix="%" inputWidth={55}
+            minLabel="1%" maxLabel="24%"
+          />
+          <SliderField
+            label="Tenure"
+            value={emiMonths}
+            min={6} max={360} step={6}
+            onChange={setEmiMonths}
+            suffix="mo" inputWidth={65}
+            minLabel="6 mo" maxLabel="360 mo"
+          />
         </div>
 
         <div className="card result-panel">
@@ -381,7 +409,7 @@ const CalculatorPage = () => {
         .calculator-page .nav-logo, .calculator-page .card-header h3,
         .calculator-page .calc-page-header h1, .calculator-page .select-card h3,
         .calculator-page .result-amount {
-          font-family: 'DM-sans','Monrope', -apple-system, sans-serif;
+          font-family: 'DM Sans','Monrope', -apple-system ,sans-serif;
         }
 
         /* ─── SCROLLBAR ─── */
@@ -412,7 +440,7 @@ const CalculatorPage = () => {
           gap: 10px;
           color: #1e1e2f;
           cursor: pointer;
-          font-family: 'DM-sans','Monrope', sans-serif;
+          font-family: 'DM Sans','Monrope', sans-serif;
         }
         .calc-nav .nav-logo i { color: #1f6f4a; }
         .calc-nav .nav-back {
@@ -512,7 +540,7 @@ const CalculatorPage = () => {
           display: flex;
           align-items: center;
           gap: 10px;
-          font-family: 'DM-sans','Monrope', sans-serif;
+          font-family:'DM Sans', 'Monrope', sans-serif;
         }
         .card-header h3 i { color: #1f6f4a; font-size: 18px; }
         .card-header .badge {
@@ -568,20 +596,56 @@ const CalculatorPage = () => {
           justify-content: space-between;
           align-items: center;
           margin-bottom: 8px;
+          gap: 10px;
         }
         .slider-label-row label {
           font-weight: 500;
           color: #5a5a72;
           font-size: 14px;
         }
-        .slider-value {
+
+        /* ─── TYPEABLE VALUE PILL ─── */
+        .slider-input-group {
+          display: flex;
+          align-items: center;
+          gap: 4px;
           background: #f0f7f3;
+          border: 1px solid transparent;
+          border-radius: 20px;
+          padding: 4px 12px;
+          transition: 0.2s;
+        }
+        .slider-input-group:focus-within {
+          border-color: #1f6f4a;
+          background: #ffffff;
+          box-shadow: 0 0 0 3px rgba(31, 111, 74, 0.12);
+        }
+        .slider-input-group .io-affix {
           color: #1f6f4a;
           font-weight: 600;
           font-size: 13px;
-          padding: 3px 12px;
-          border-radius: 20px;
+          white-space: nowrap;
         }
+        .slider-number-input {
+          border: none;
+          background: transparent;
+          outline: none;
+          font-weight: 600;
+          font-size: 13px;
+          color: #1f6f4a;
+          text-align: right;
+          font-family: 'DM Sans', sans-serif;
+        }
+        .slider-number-input::-webkit-outer-spin-button,
+        .slider-number-input::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+        .slider-number-input[type="number"] {
+          -moz-appearance: textfield;
+          appearance: textfield;
+        }
+
         .slider-group input[type="range"] {
           width: 100%;
           height: 6px;
@@ -657,7 +721,7 @@ const CalculatorPage = () => {
           font-size: 16px;
           margin-bottom: 16px;
           text-align: center;
-          font-family: 'Monrope', sans-serif;
+          font-family:'DM Sans', 'Monrope', sans-serif;
         }
         .chart-bars {
           display: flex;

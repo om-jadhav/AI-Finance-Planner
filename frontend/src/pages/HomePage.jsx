@@ -60,7 +60,7 @@ const HomePage = () => {
         .homepage .nav-logo, .homepage .brand, .homepage .feature-card h4,
         .homepage .calculator-card h4, .homepage .footer-brand,
         .homepage .footer-col h5 {
-          font-family: 'Monrope', -apple-system, sans-serif;
+          font-family: 'DM Sans', 'Monrope', -apple-system, sans-serif;
         }
 
         /* ─── SCROLLBAR ─── */
@@ -88,7 +88,7 @@ const HomePage = () => {
           align-items: center;
           gap: 10px;
           color: #1e1e2f;
-          font-family: 'Monrope', sans-serif;
+          font-family: 'DM Sans', 'Monrope', -apple-system, sans-serif;
         }
         .landing-nav .nav-logo i { color: #1f6f4a; }
         .landing-nav .nav-links {
@@ -187,7 +187,7 @@ const HomePage = () => {
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
-          font-family: 'Monrope', sans-serif;
+          font-family: 'DM Sans','Monrope', sans-serif;
         }
         .hero-copy p {
           color: #6b6b85;
@@ -251,7 +251,7 @@ const HomePage = () => {
         .health-card h3 {
           font-size: 17px;
           margin-bottom: 16px;
-          font-family: 'Monrope', sans-serif;
+          font-family:'DM Sans', 'Monrope', sans-serif;
         }
         .health-score-row {
           display: flex;
@@ -272,7 +272,7 @@ const HomePage = () => {
           font-weight: 700;
           font-size: 20px;
           color: #1f6f4a;
-          font-family: 'Monrope', sans-serif;
+          font-family: 'DM Sans','Monrope', sans-serif;
         }
         .score-label-block .score-out-of { color: #9a9caf; font-size: 13px; }
         .score-label-block .score-status {
@@ -319,7 +319,7 @@ const HomePage = () => {
           font-size: 32px;
           font-weight: 700;
           margin-bottom: 36px;
-          font-family: 'Monrope', sans-serif;
+          font-family: 'DM Sans','Monrope', sans-serif;
         }
         .features-grid {
           display: grid;
@@ -365,7 +365,7 @@ const HomePage = () => {
           font-size: 30px;
           font-weight: 700;
           margin-bottom: 10px;
-          font-family: 'Monrope', sans-serif;
+          font-family: 'DM Sans','Monrope', sans-serif;
         }
         .assessment-copy > p.lead {
           color: #6b6b85;
@@ -404,7 +404,7 @@ const HomePage = () => {
           font-size: 32px;
           font-weight: 700;
           margin-bottom: 8px;
-          font-family: 'Monrope', sans-serif;
+          font-family:'DM Sans', 'Monrope', sans-serif;
         }
         .calculators-section > p {
           color: #6b6b85;
@@ -453,7 +453,7 @@ const HomePage = () => {
         .cta-banner h2 {
           color: #fff;
           font-size: 30px;
-          font-family: 'Monrope', sans-serif;
+          font-family:'DM Sans', 'Monrope', sans-serif;
           margin-bottom: 18px;
           position: relative;
         }
