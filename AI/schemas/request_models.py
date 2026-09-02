@@ -14,6 +14,10 @@ class Profile(BaseModel):
         le=100,
     )
 
+    employment_status: str = "Salaried"
+
+    marital_status: str = "Single"
+
     monthly_income: float = Field(
         ge=0
     )

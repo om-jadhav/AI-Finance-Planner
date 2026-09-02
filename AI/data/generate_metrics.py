@@ -21,7 +21,7 @@ from analytics.gold import analyze_gold_dataset
 from analytics.cpi import analyze_cpi
 from analytics.rbi import analyze_rbi
 from analytics.stocks import analyze_stocks_workbook
-from analytics.dummy_assets import analyze_dummy_assets
+from analytics.dummy_assests import analyze_dummy_assets
 
 
 def build_metrics():

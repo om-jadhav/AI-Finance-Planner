@@ -136,7 +136,7 @@ CATEGORY_ALIASES = {
     "stocks": ["stocks"],
     "mutual_funds": ["mutual_funds"],
     "gold": ["etf_instruments"],  # GOLDBEES/SILVERBEES live here
-    "etf_instruments": ["etf_instruments", "index_funds"],
+    "etf_instruments": ["etf_instruments"],
     "fixed_income": ["fixed_income"],
 }
 
@@ -152,7 +152,6 @@ def select_instruments(
 
     stocks = historical_metrics.get("stocks", {})
     etf_data = historical_metrics.get("sip", {})
-    nifty = historical_metrics.get("nifty", {})
     dummy_assets = historical_metrics.get("dummy_assets", {})
 
     # Split dummy_assets (computed together) into
@@ -179,7 +178,6 @@ def select_instruments(
         "stocks": select_top_assets(stocks, limit=stock_limit),
         "etf_instruments": select_top_assets(etf_data, limit=4),
         # ^ includes real GOLDBEES/SILVERBEES/NIFTYBEES/BANKBEES data
-        "index_funds": select_top_assets(nifty, limit=1),
         "fixed_income": select_top_assets(
             dummy_fixed_income, limit=2
         ),
