@@ -74,9 +74,11 @@ const CalculatorPage = () => {
   const [sipChartData, setSipChartData] = useState([]);
 
   // ─── SWP State ──────────────────────────────────────────
-  const [swpMonthly, setSwpMonthly] = useState(10000);
+  const [swpCorpus, setSwpCorpus] = useState(2000000);
   const [swpReturn, setSwpReturn] = useState(10);
   const [swpYears, setSwpYears] = useState(15);
+  const [swpMaxWithdrawal, setSwpMaxWithdrawal] = useState(0);
+  const [swpWithdrawal, setSwpWithdrawal] = useState(0);
   const [swpResult, setSwpResult] = useState(null);
 
   // ─── EMI State ──────────────────────────────────────────
@@ -110,16 +112,37 @@ const CalculatorPage = () => {
     setSipChartData(data);
   };
 
-  const calculateSWP = () => {
-    const w = swpMonthly;
+  // Maximum monthly withdrawal that exactly exhausts the corpus by the end of the tenure.
+  const calculateSWPMax = () => {
+    const P = swpCorpus;
     const r = swpReturn / 100 / 12;
     const n = swpYears * 12;
-    if (w <= 0 || r <= 0 || n <= 0) {
+    if (P <= 0 || r <= 0 || n <= 0) {
+      setSwpMaxWithdrawal(0);
+      return;
+    }
+    const growth = Math.pow(1 + r, n);
+    const maxW = (P * growth * r) / (growth - 1);
+    setSwpMaxWithdrawal(maxW);
+    setSwpWithdrawal(maxW); // default the withdrawal slider to the max whenever corpus/return/tenure change
+  };
+
+  // Corpus remaining at the end of the tenure for whatever withdrawal amount is actually chosen.
+  const calculateSWPResult = () => {
+    const P = swpCorpus;
+    const r = swpReturn / 100 / 12;
+    const n = swpYears * 12;
+    if (P <= 0 || r <= 0 || n <= 0 || swpWithdrawal < 0) {
       setSwpResult(null);
       return;
     }
-    const pv = w * (1 - Math.pow(1 + r, -n)) / r * (1 + r);
-    setSwpResult({ corpus: pv, totalWithdrawal: w * n });
+    const growth = Math.pow(1 + r, n);
+    const remaining = P * growth - swpWithdrawal * ((growth - 1) / r);
+    setSwpResult({
+      remainingCorpus: Math.max(remaining, 0),
+      totalWithdrawal: swpWithdrawal * n,
+      depleted: remaining <= P * 0.001,
+    });
   };
 
   const calculateEMI = () => {
@@ -136,7 +159,8 @@ const CalculatorPage = () => {
   };
 
   useEffect(() => { if (view === 'sip') calculateSIP(); }, [sipMonthly, sipReturn, sipYears, view]);
-  useEffect(() => { if (view === 'swp') calculateSWP(); }, [swpMonthly, swpReturn, swpYears, view]);
+  useEffect(() => { if (view === 'swp') calculateSWPMax(); }, [swpCorpus, swpReturn, swpYears, view]);
+  useEffect(() => { if (view === 'swp') calculateSWPResult(); }, [swpWithdrawal, swpCorpus, swpReturn, swpYears, view]);
   useEffect(() => { if (view === 'emi') calculateEMI(); }, [emiLoan, emiRate, emiMonths, view]);
 
   // ─── Render: Selection ─────────────────────────────────
@@ -286,12 +310,12 @@ const CalculatorPage = () => {
           </div>
 
           <SliderField
-            label="Monthly Withdrawal"
-            value={swpMonthly}
-            min={1000} max={100000} step={500}
-            onChange={setSwpMonthly}
-            prefix="₹" inputWidth={90}
-            minLabel="₹1,000" maxLabel="₹1,00,000"
+            label="Current Corpus"
+            value={swpCorpus}
+            min={100000} max={20000000} step={50000}
+            onChange={setSwpCorpus}
+            prefix="₹" inputWidth={110}
+            minLabel="₹1,00,000" maxLabel="₹2,00,00,000"
           />
           <SliderField
             label="Expected Return"
@@ -309,22 +333,46 @@ const CalculatorPage = () => {
             suffix="yrs" inputWidth={55}
             minLabel="1 yr" maxLabel="30 yrs"
           />
+
+          <div className="max-withdrawal-box">
+            <i className="fas fa-circle-info"></i>
+            <div>
+              <span className="mw-label">Max sustainable monthly withdrawal</span>
+              <span className="mw-value">{inr(swpMaxWithdrawal)}</span>
+            </div>
+          </div>
+
+          <SliderField
+            label="Your Monthly Withdrawal"
+            value={swpWithdrawal}
+            min={0} max={Math.max(Math.round(swpMaxWithdrawal), 1)} step={500}
+            onChange={setSwpWithdrawal}
+            prefix="₹" inputWidth={90}
+            minLabel="₹0" maxLabel={inr(swpMaxWithdrawal)}
+          />
         </div>
 
         <div className="card result-panel">
-          <div className="result-eyebrow"><i className="fas fa-piggy-bank"></i> Required Corpus</div>
-          <div className="result-amount">{swpResult ? inr(swpResult.corpus) : '—'}</div>
+          <div className="result-eyebrow"><i className="fas fa-piggy-bank"></i> Corpus After Tenure</div>
+          <div className="result-amount">{swpResult ? inr(swpResult.remainingCorpus) : '—'}</div>
           {swpResult && (
-            <div className="result-stats">
-              <div className="stat">
-                <span className="stat-label">Total Withdrawn</span>
-                <span className="stat-value">{inr(swpResult.totalWithdrawal)}</span>
+            <>
+              <div className="result-stats">
+                <div className="stat">
+                  <span className="stat-label">Monthly Withdrawal</span>
+                  <span className="stat-value accent">{inr(swpWithdrawal)}</span>
+                </div>
+                <div className="stat">
+                  <span className="stat-label">Total Withdrawn</span>
+                  <span className="stat-value">{inr(swpResult.totalWithdrawal)}</span>
+                </div>
               </div>
-              <div className="stat">
-                <span className="stat-label">Over</span>
-                <span className="stat-value accent">{swpYears} years</span>
+              <div className="result-note">
+                {swpResult.depleted
+                  ? 'At this withdrawal rate, your corpus is fully used up by the end of the tenure.'
+                  : "This is what's left in your corpus after withdrawing every month for the full tenure."}
               </div>
-            </div>
+            </>
           )}
         </div>
       </div>
@@ -682,6 +730,31 @@ const CalculatorPage = () => {
           color: #9a9caf;
         }
 
+        /* ─── MAX WITHDRAWAL CALLOUT ─── */
+        .max-withdrawal-box {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          background: #f0f7f3;
+          border: 1px solid #d9ede1;
+          border-radius: 14px;
+          padding: 12px 16px;
+          margin: 4px 0 24px;
+        }
+        .max-withdrawal-box i { color: #1f6f4a; font-size: 18px; }
+        .max-withdrawal-box .mw-label {
+          display: block;
+          font-size: 12px;
+          color: #5a5a72;
+        }
+        .max-withdrawal-box .mw-value {
+          display: block;
+          font-size: 16px;
+          font-weight: 700;
+          color: #1f6f4a;
+          font-family: 'DM Sans','Monrope', sans-serif;
+        }
+
         /* ─── RESULT PANEL ─── */
         .result-panel {
           background: linear-gradient(160deg, #1f6f4a, #164f36);
@@ -714,6 +787,14 @@ const CalculatorPage = () => {
         .stat-label { font-size: 12px; color: rgba(255,255,255,0.65); }
         .stat-value { font-size: 15px; font-weight: 600; color: #ffffff; }
         .stat-value.accent { color: #a9e6c4; }
+        .result-note {
+          margin-top: 16px;
+          padding-top: 16px;
+          border-top: 1px solid rgba(255,255,255,0.18);
+          font-size: 12.5px;
+          color: rgba(255,255,255,0.75);
+          line-height: 1.5;
+        }
 
         /* ─── CHART ─── */
         .chart-container { margin-top: 24px; overflow-x: auto; }

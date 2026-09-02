@@ -6,6 +6,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 // Public pages
 import HomePage from "./pages/HomePage";
 import CalculatorPage from "./pages/CalculatorPage";
+import AssessmentPage from "./pages/AssessmentPage";
 
 // Auth pages
 import Login from "./pages/Login";
@@ -26,6 +27,9 @@ export default function App() {
 
           {/* Public calculators (no login required) */}
           <Route path="/calculators" element={<CalculatorPage />} />
+
+          {/* Public 2-minute financial health quiz (no login required) */}
+          <Route path="/assessment" element={<AssessmentPage />} />
 
           {/* Public auth routes */}
           <Route path="/login" element={<Login />} />
