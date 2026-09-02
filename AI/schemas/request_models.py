@@ -81,3 +81,21 @@ class GeneratePlanRequest(BaseModel):
     # Values: "stocks", "mutual_funds", "gold", "etf_instruments",
     # "fixed_income". None or empty list = no filtering (all allowed).
     # "I'm open to all" on the frontend should send None.
+
+
+class ChatMessage(BaseModel):
+    role: str  # "user" | "assistant"
+    content: str
+
+
+class ChatRequest(BaseModel):
+    # Full conversation the caller has. Only the last 10 are actually used
+    # (see chat_service.MAX_HISTORY_MESSAGES) -- the caller may send more,
+    # it will be trimmed server-side regardless.
+    messages: list[ChatMessage]
+
+    # The user's own profile/risk_profile/feasibility/portfolio/plan data,
+    # in the exact shape /generate-plan returns. None if the user hasn't
+    # generated a plan yet -- the chatbot still answers general
+    # knowledge_base questions in that case.
+    user_context: Optional[Dict[str, Any]] = None

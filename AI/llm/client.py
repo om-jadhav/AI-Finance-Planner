@@ -69,3 +69,59 @@ def generate_llm_response(
         print(f"Error: {error}")
         print("================================")
         return None
+
+
+def generate_chat_reply(
+    system_prompt: str,
+    messages: list,
+) -> Optional[str]:
+    """
+    Multi-turn conversational reply, for the RAG chatbot.
+
+    Kept separate from generate_llm_response() (used for the single-shot,
+    JSON-only plan generation call) since chat replies are plain
+    conversational text with a growing turn history, not one user_prompt
+    string.
+
+    Returns None when LLM is disabled or unavailable, same as
+    generate_llm_response().
+    """
+
+    if not LLM_ENABLED:
+        return None
+
+    if not LLM_API_KEY:
+        return None
+
+    try:
+        client = Groq(
+            api_key=LLM_API_KEY
+        )
+
+        response = (
+            client.chat.completions.create(
+                model=LLM_MODEL,
+                messages=(
+                    [{"role": "system", "content": system_prompt}]
+                    + messages
+                ),
+                temperature=0.4,
+                max_completion_tokens=500,
+                # No response_format=json_object -- chat replies are
+                # plain conversational text, not a structured JSON object.
+            )
+        )
+
+        return (
+            response
+            .choices[0]
+            .message
+            .content
+        )
+
+    except Exception as error:
+        print("========== LLM CHAT ERROR ==========")
+        print(f"Error type: {type(error).__name__}")
+        print(f"Error: {error}")
+        print("=====================================")
+        return None

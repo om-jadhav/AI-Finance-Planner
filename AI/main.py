@@ -16,6 +16,7 @@ from data.historical_metrics import (
 
 from schemas.request_models import (
     GeneratePlanRequest,
+    ChatRequest,
 )
 
 from schemas.response_models import (
@@ -41,6 +42,11 @@ from services.plan_generator import (
 
 from services.plan_validator import (
     validate_plan,
+)
+
+from services.chat_service import (
+    generate_chat_response,
+    ChatError,
 )
 
 
@@ -204,6 +210,49 @@ def generate_financial_plan(
 
     except HTTPException:
         raise
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=str(error),
+        )
+
+
+@app.post("/chat")
+def chat(
+    request: ChatRequest,
+):
+    """
+    RAG chatbot endpoint.
+
+    Retrieves relevant knowledge-base passages for the user's latest
+    message, combines them with the user's own already-computed
+    profile/risk/feasibility/portfolio/plan data (request.user_context,
+    if any -- in the exact shape /generate-plan returns), and asks the
+    LLM to reply. Never recalculates any financial figure -- it only
+    explains numbers already produced by the deterministic engine above.
+    """
+
+    try:
+        result = generate_chat_response(
+            messages=[
+                message.model_dump()
+                for message in request.messages
+            ],
+            user_context=request.user_context,
+        )
+
+        return {
+            "success": True,
+            "reply": result["reply"],
+            "sources": result["sources"],
+        }
+
+    except ChatError as error:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Chat assistant unavailable: {error}",
+        )
 
     except Exception as error:
         raise HTTPException(
