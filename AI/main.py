@@ -149,8 +149,28 @@ def generate_financial_plan(
                     request.preferred_categories,
             )
         )
+        # 6. Decide investment mode based on monthly investment capacity.
+        monthly_investment = profile["monthly_investment_capacity"]
 
-        # 6. Build structured context.
+        if monthly_investment < 1000:
+            investment_mode = {
+                "type": "single_asset",
+                "monthly_investment": monthly_investment,
+            }
+
+        elif monthly_investment <= 3000:
+            investment_mode = {
+                "type": "two_assets",
+                "monthly_investment": monthly_investment,
+            }
+
+        else:
+            investment_mode = {
+                "type": "full_diversification",
+                "monthly_investment": monthly_investment,
+            }
+
+        # 7. Build structured context.
         context = {
             "profile": profile,
             "goal": goal,
@@ -158,6 +178,8 @@ def generate_financial_plan(
             "feasibility": feasibility,
             "selected_instruments":
                 selected_instruments,
+            "investment_mode":
+                investment_mode,
         }
 
         # 7. LLM plan generation. Raises PlanGenerationError
