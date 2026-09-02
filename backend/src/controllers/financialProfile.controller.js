@@ -81,9 +81,15 @@ async function saveFinancialProfileStep(req, res) {
 
   // Conditional fields: if the "no" branch was chosen, don't carry over
   // stale values from a previous edit of this step.
-  if (step === 2 && !data.hasMajorExpenseBeforeGoal) {
-    data.majorExpenseAmount = null;
-    data.majorExpenseYear = null;
+  if (step === 2) {
+    // REMOVE these lines if present:
+    // if (data.hasMajorExpenseBeforeGoal === "true") {
+    //   data.majorExpenseAmount = Number(data.majorExpenseAmount);
+    //   data.majorExpenseYear = Number(data.majorExpenseYear);
+    // } else {
+    //   data.majorExpenseAmount = null;
+    //   data.majorExpenseYear = null;
+    // }
   }
   if (step === 3 && !data.hasExistingInvestments) {
     data.existingInvestmentTypes = [];
@@ -92,8 +98,13 @@ async function saveFinancialProfileStep(req, res) {
 
   await prisma[modelName].upsert({
     where: { userId: req.userId },
-    create: { userId: req.userId, ...data },
-    update: data,
+    create: {
+      userId: req.userId,
+      ...data,
+    },
+    update: {
+      ...data,
+    },
   });
 
   // Reuse the GET logic so the response shape (merged profile,

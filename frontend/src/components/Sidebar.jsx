@@ -32,14 +32,6 @@ export default function Sidebar({ active }) {
           Financial Profile
         </Link>
 
-        {/* NEW: Calculators link – points to the public calculator page */}
-        <Link
-          to="/calculators"
-          className={`nav-item ${active === "calculator" ? "active" : ""}`}
-        >
-        <i className="fas fa-calculator"></i>          Calculators
-        </Link>
-
         <Link
           to="/plan"
           className={`nav-item ${active === "plan" ? "active" : ""}`}
@@ -54,6 +46,15 @@ export default function Sidebar({ active }) {
         >
           <Icon>💬</Icon>
           Financial Assistant
+        </Link>
+
+
+        {/* NEW: Calculators link – points to the public calculator page */}
+        <Link
+          to="/calculators"
+          className={`nav-item ${active === "calculator" ? "active" : ""}`}
+        >
+          <i className="fas fa-calculator"></i>          Calculators
         </Link>
       </nav>
 

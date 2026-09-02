@@ -173,9 +173,6 @@ model Goal {
   goalTargetAmount          Float
   goalTimeYears             Int
   goalFlexibility           GoalFlexibility
-  hasMajorExpenseBeforeGoal Boolean
-  majorExpenseAmount        Float?
-  majorExpenseYear          Int?
 
   // Added for the Grok/FastAPI plan-generation request contract.
   priority GoalPriority @default(MEDIUM)

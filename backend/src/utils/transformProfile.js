@@ -34,6 +34,10 @@ function normalizePreferredCategory(category) {
 }
 
 function toLlmInputPayload(userId, profile) {
+  // remove any extraction/mapping of:
+  // hasMajorExpenseBeforeGoal
+  // majorExpenseAmount
+  // majorExpenseYear
 
   const hasExisting = !!profile.hasExistingInvestments;
 
