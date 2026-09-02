@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 
 const authRoutes = require("./routes/auth.routes");
 const profileRoutes = require("./routes/profile.routes");
+const chatRoutes = require("./routes/chat.routes");
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.get("/api/health", (req, res) => res.json({ status: "ok" }));
 
 app.use("/api/auth", authRoutes);
 app.use("/api", profileRoutes);
+app.use("/api", chatRoutes);
 
 // Centralized error handler — catches anything thrown/rejected in route
 // handlers that wasn't already caught, so the server never crashes silently

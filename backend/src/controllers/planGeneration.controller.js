@@ -126,4 +126,4 @@ async function getLatestPlan(req, res) {
   res.json({ plan: plan || null });
 }
 
-module.exports = { generatePlan, listPlans, getLatestPlan };
+module.exports = { generatePlan, listPlans, getLatestPlan, getMergedProfile };

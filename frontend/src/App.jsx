@@ -16,6 +16,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import FinancialProfile from "./pages/FinancialProfile";
 import GeneratedPlan from "./pages/GeneratePlan";
+import FinancialAssistant from "./pages/FinancialAssistant";
 
 export default function App() {
   return (
@@ -59,6 +60,17 @@ export default function App() {
 
           {/* Fallback – redirect unknown routes to home */}
           <Route path="*" element={<Navigate to="/" replace />} />
+          <Route
+            path="/financial-assistant"
+            element={
+              <ProtectedRoute>
+                <FinancialAssistant />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Unknown routes */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
