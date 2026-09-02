@@ -41,7 +41,6 @@ REQUIRED_PLAN_FIELDS = {
     "allocation",
     "expected_annual_return",
     "reasoning",
-    "goal_alignment",
 }
 
 

@@ -30,10 +30,6 @@ from services.feasibility import (
     calculate_feasibility,
 )
 
-from services.portfolio_allocator import (
-    calculate_portfolio_allocation,
-)
-
 from services.instrument_selector import (
     select_instruments,
 )
@@ -133,17 +129,6 @@ def generate_financial_plan(
             assumed_annual_return=assumed_return,
         )
 
-        # 4. Portfolio allocation.
-        allocation = (
-            calculate_portfolio_allocation(
-                risk_category=risk_profile[
-                    "risk_category"
-                ],
-                target_years=goal[
-                    "target_years"
-                ],
-            )
-        )
 
         # 5. Select actual instruments, respecting
         #    the user's Step 5 category preferences.
@@ -165,7 +150,6 @@ def generate_financial_plan(
             "goal": goal,
             "risk_profile": risk_profile,
             "feasibility": feasibility,
-            "allocation": allocation,
             "selected_instruments":
                 selected_instruments,
         }
@@ -188,7 +172,6 @@ def generate_financial_plan(
         validation = validate_plan(
             risk_profile=risk_profile,
             feasibility=feasibility,
-            allocation=allocation,
             selected_instruments=
                 selected_instruments,
             plan=plan,
@@ -199,7 +182,6 @@ def generate_financial_plan(
             "risk_profile": risk_profile,
             "feasibility": feasibility,
             "portfolio": {
-                "allocation": allocation,
                 "recommended_instruments":
                     selected_instruments,
             },
