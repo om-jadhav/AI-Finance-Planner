@@ -151,10 +151,6 @@ function PlanOptionCard({ plan, index }) {
             ))}
           </div>
         )}
-
-        {plan.goal_alignment && (
-          <p className="plan-option-goal-alignment">{plan.goal_alignment}</p>
-        )}
       </div>
     </div>
   );
@@ -462,13 +458,6 @@ export default function GeneratedPlan() {
                     </span>
                   </div>
 
-                  <div className="plan-stat">
-                    <span className="plan-stat-label">Assumed Return</span>
-
-                    <span className="plan-stat-value">
-                      {formatFractionAsPercent(response.feasibility?.assumed_annual_return)}
-                    </span>
-                  </div>
 
                   <div className="plan-stat">
                     <span className="plan-stat-label">Horizon</span>
@@ -481,19 +470,7 @@ export default function GeneratedPlan() {
               </section>
 
               {/* PORTFOLIO */}
-              <section className="plan-card">
-                <div className="plan-card-header">
-                  <div>
-                    <span className="plan-card-eyebrow">INVESTMENT STRATEGY</span>
-
-                    <h3>Recommended Allocation</h3>
-                  </div>
-
-                  <div className="plan-section-icon">↗</div>
-                </div>
-
-                <DynamicKeyValue data={response.portfolio?.allocation} />
-              </section>
+            
 
               {/* PLAN OPTIONS */}
               <section className="plan-card">
