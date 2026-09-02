@@ -114,9 +114,6 @@ const emptyForms = {
     goalTimeYears: "",
     goalFlexibility: "",
     priority: "",
-    hasMajorExpenseBeforeGoal: "",
-    majorExpenseAmount: "",
-    majorExpenseYear: "",
   },
   3: {
     monthlyInvestmentCapacity: "",
@@ -154,12 +151,6 @@ function buildFormsFromProfile(profile) {
       goalTimeYears: toFormValue(profile.goalTimeYears),
       goalFlexibility: toFormValue(profile.goalFlexibility),
       priority: toFormValue(profile.priority),
-      hasMajorExpenseBeforeGoal:
-        profile.hasMajorExpenseBeforeGoal === null || profile.hasMajorExpenseBeforeGoal === undefined
-          ? ""
-          : String(profile.hasMajorExpenseBeforeGoal),
-      majorExpenseAmount: toFormValue(profile.majorExpenseAmount),
-      majorExpenseYear: toFormValue(profile.majorExpenseYear),
     },
     3: {
       monthlyInvestmentCapacity: toFormValue(profile.monthlyInvestmentCapacity),
@@ -316,16 +307,12 @@ export default function FinancialProfile() {
           investmentExperience: f.investmentExperience,
         };
       case 2: {
-        const hasMajorExpense = f.hasMajorExpenseBeforeGoal === "true";
         return {
           primaryGoal: f.primaryGoal,
           goalTargetAmount: Number(f.goalTargetAmount), // ← Convert to number
           goalTimeYears: Number(f.goalTimeYears), // ← Convert to number
           goalFlexibility: f.goalFlexibility,
           priority: f.priority,
-          hasMajorExpenseBeforeGoal: hasMajorExpense,
-          majorExpenseAmount: hasMajorExpense ? Number(f.majorExpenseAmount) : null,
-          majorExpenseYear: hasMajorExpense ? Number(f.majorExpenseYear) : null,
         };
       }
       case 3: {
@@ -370,12 +357,8 @@ export default function FinancialProfile() {
           f.goalTargetAmount !== "" &&
           f.goalTimeYears !== "" &&
           f.goalFlexibility &&
-          f.priority &&
-          f.hasMajorExpenseBeforeGoal !== "";
+          f.priority;
         if (!base) return false;
-        if (f.hasMajorExpenseBeforeGoal === "true") {
-          return f.majorExpenseAmount !== "" && f.majorExpenseYear !== "";
-        }
         return true;
       }
       case 3: {
@@ -653,8 +636,6 @@ function StepPersonalIncome({ form, update }) {
 }
 
 function StepGoal({ form, update }) {
-  const showMajorExpenseFields = form.hasMajorExpenseBeforeGoal === "true";
-
   return (
     <div className="step-body">
       <h2 className="step-title">Goal</h2>
@@ -704,38 +685,6 @@ function StepGoal({ form, update }) {
           onChange={(v) => update("priority", v)}
         />
       </div>
-
-      <div className="form-group">
-        <label className="form-label">
-          Do you expect to make any major expenses before reaching this goal?
-        </label>
-        <RadioPillGroup
-          options={YES_NO_OPTIONS}
-          value={form.hasMajorExpenseBeforeGoal}
-          onChange={(v) => update("hasMajorExpenseBeforeGoal", v)}
-        />
-      </div>
-
-      {showMajorExpenseFields && (
-        <div className="conditional-fields">
-          <AmountInput
-            label="Expected expense"
-            value={form.majorExpenseAmount}
-            onChange={(v) => update("majorExpenseAmount", v)}
-          />
-          <div className="form-group">
-            <label className="form-label">Approximate year</label>
-            <input
-              type="number"
-              min="2024"
-              className="form-input"
-              value={form.majorExpenseYear}
-              placeholder="e.g. 2028"
-              onChange={(e) => update("majorExpenseYear", e.target.value)}
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -168,7 +168,7 @@ const CalculatorPage = () => {
       <div className="calc-page-header">
         <div className="page-icon"><i className="fas fa-calculator"></i></div>
         <h1>Financial Calculators</h1>
-        <p className="subtitle">Choose a tool to get started — no login required.</p>
+        <p className="subtitle">Choose a tool to get started</p>
       </div>
 
       <div className="cards-grid">

@@ -37,39 +37,22 @@ const personalIncomeSchema = z.object({
   investmentExperience: z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED"]),
 });
 
-const goalSchema = z
-  .object({
-    primaryGoal: z.enum([
-      "RETIREMENT",
-      "WEALTH_CREATION",
-      "EDUCATION",
-      "HOME_PURCHASE",
-      "MARRIAGE",
-      "TRAVEL",
-      "EMERGENCY_FUND",
-      "OTHER",
-    ]),
-    goalTargetAmount: money("Goal amount"),
-    goalTimeYears: z.coerce.number().min(0, "Enter a valid number of years"),
-    goalFlexibility: z.enum(["FLEXIBLE", "SOMEWHAT_FLEXIBLE", "FIXED_DEADLINE"]),
-    // Added for the Grok/FastAPI plan-generation request contract.
-    priority: z.enum(["LOW", "MEDIUM", "HIGH"]),
-    hasMajorExpenseBeforeGoal: z.boolean(),
-    majorExpenseAmount: money("Expected expense").optional().nullable(),
-    majorExpenseYear: z.coerce.number().int().optional().nullable(),
-  })
-  .refine(
-    (data) =>
-      !data.hasMajorExpenseBeforeGoal ||
-      (data.majorExpenseAmount !== undefined &&
-        data.majorExpenseAmount !== null &&
-        data.majorExpenseYear !== undefined &&
-        data.majorExpenseYear !== null),
-    {
-      message: "Expected expense amount and year are required",
-      path: ["majorExpenseAmount"],
-    }
-  );
+const goalSchema = z.object({
+  primaryGoal: z.enum([
+    "RETIREMENT",
+    "WEALTH_CREATION",
+    "EDUCATION",
+    "HOME_PURCHASE",
+    "MARRIAGE",
+    "TRAVEL",
+    "EMERGENCY_FUND",
+    "OTHER",
+  ]),
+  goalTargetAmount: money("Goal amount"),
+  goalTimeYears: z.coerce.number().min(0, "Enter a valid number of years"),
+  goalFlexibility: z.enum(["FLEXIBLE", "SOMEWHAT_FLEXIBLE", "FIXED_DEADLINE"]),
+  priority: z.enum(["LOW", "MEDIUM", "HIGH"]),
+});
 
 const investmentCapacitySchema = z
   .object({

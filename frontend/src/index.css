@@ -295,9 +295,13 @@ a {
 }
 
 .sidebar {
+  position: sticky;
+  top: 0;
   width: 245px;
   flex-shrink: 0;
-  min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
+  align-self: flex-start;
   padding: 25px 17px;
   background: #123c2b;
   color: white;
