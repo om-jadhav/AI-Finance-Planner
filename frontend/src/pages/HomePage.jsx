@@ -732,7 +732,7 @@ const HomePage = () => {
           </div>
         </div>
 
-        {/* Calculators */}
+        {/* Calculators
         <div className="calculators-section" id="calculators">
           <h2>Make better financial decisions with simple calculators</h2>
           <p>Explore easy-to-use calculators to estimate your investments and loan payments.</p>
@@ -748,7 +748,7 @@ const HomePage = () => {
           <button className="btn-outline" onClick={() => navigate('/calculators')}>
             Explore All Calculators <i className="fas fa-arrow-right"></i>
           </button>
-        </div>
+        </div> */}
 
         {/* Final CTA */}
         <div className="cta-banner">

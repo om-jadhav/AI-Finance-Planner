@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
 
 const inr = (num) => `₹ ${Math.round(num).toLocaleString('en-IN')}`;
 const pct = (val, min, max) => ((val - min) / (max - min)) * 100;
@@ -61,8 +61,6 @@ const SliderField = ({ label, value, min, max, step, onChange, prefix = '', suff
 };
 
 const CalculatorPage = () => {
-  const navigate = useNavigate();
-
   // ─── View State ──────────────────────────────────────────
   const [view, setView] = useState('select'); // 'select' | 'sip' | 'swp' | 'emi'
 
@@ -443,13 +441,15 @@ const CalculatorPage = () => {
   // ─── Main Render ────────────────────────────────────────
 
   return (
-    <div className="calculator-page">
+    <div className="dashboard-layout">
+      <Sidebar active="calculator" />
+
+      <main className="dashboard-main calculator-page">
       <style>{`
         /* ─── RESET & BASE ─── */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        .calculator-page * { margin: 0; padding: 0; box-sizing: border-box; }
         .calculator-page {
           background: #f4f6fb;
-          min-height: 100vh;
           color: #1e1e2f;
           font-family: 'DM Sans', -apple-system, sans-serif;
         }
@@ -465,47 +465,6 @@ const CalculatorPage = () => {
         .calculator-page ::-webkit-scrollbar-track { background: #eef0f5; }
         .calculator-page ::-webkit-scrollbar-thumb { background: #b7b9cc; border-radius: 12px; }
         .calculator-page ::-webkit-scrollbar-thumb:hover { background: #9a9caf; }
-
-        /* ─── TOP NAV ─── */
-        .calc-nav {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 16px 40px;
-          background: #ffffff;
-          border-bottom: 1px solid #edeff4;
-          flex-wrap: wrap;
-          gap: 12px;
-          position: sticky;
-          top: 0;
-          z-index: 10;
-        }
-        .calc-nav .nav-logo {
-          font-size: 24px;
-          font-weight: 700;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          color: #1e1e2f;
-          cursor: pointer;
-          font-family: 'DM Sans','Monrope', sans-serif;
-        }
-        .calc-nav .nav-logo i { color: #1f6f4a; }
-        .calc-nav .nav-back {
-          background: transparent;
-          border: 1px solid #d9dce6;
-          color: #1e1e2f;
-          font-weight: 600;
-          font-size: 14px;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding: 8px 20px;
-          border-radius: 40px;
-          transition: 0.2s;
-        }
-        .calc-nav .nav-back:hover { background: #f0effb; border-color: #1f6f4a; }
 
         /* ─── MAIN CONTENT ─── */
         .calc-main {
@@ -866,7 +825,6 @@ const CalculatorPage = () => {
           .cards-grid { grid-template-columns: 1fr; }
         }
         @media (max-width: 700px) {
-          .calc-nav { padding: 12px 16px; }
           .calc-main { padding: 24px 16px; }
           .chart-bars { height: 150px; }
           .bar-wrapper { height: 130px; }
@@ -876,16 +834,6 @@ const CalculatorPage = () => {
         }
       `}</style>
 
-      {/* ─── TOP NAV ─── */}
-      <nav className="calc-nav">
-        <div className="nav-logo" onClick={() => navigate('/')}>
-          <i className="fas fa-wallet"></i> FinPlan
-        </div>
-        <button className="nav-back" onClick={() => navigate('/')}>
-          <i className="fas fa-arrow-left"></i> Back to Home
-        </button>
-      </nav>
-
       {/* ─── MAIN ─── */}
       <div className="calc-main">
         {view === 'select' && renderSelection()}
@@ -893,6 +841,7 @@ const CalculatorPage = () => {
         {view === 'swp' && renderSWP()}
         {view === 'emi' && renderEMI()}
       </div>
+      </main>
     </div>
   );
 };
