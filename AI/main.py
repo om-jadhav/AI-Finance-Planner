@@ -27,8 +27,16 @@ from services.risk_profile import (
     calculate_risk_profile,
 )
 
+from services.goal_explanation import (
+    generate_goal_explanation,
+    GoalExplanationError,
+)
+
 from services.feasibility import (
     calculate_feasibility,
+)
+from services.goal_suggestions import (
+    generate_goal_suggestions,
 )
 
 from services.instrument_selector import (
@@ -134,8 +142,37 @@ def generate_financial_plan(
             goal=goal,
             assumed_annual_return=assumed_return,
         )
+    
+        goal_suggestions = generate_goal_suggestions(
+            feasibility
+        )
+        if not feasibility["goal_feasible"]:
 
+            explanation_context = {
+                "profile": profile,
+                "goal": goal,
+                "risk_profile": risk_profile,
+                "feasibility": feasibility,
+                "goal_suggestions": goal_suggestions,
+            }
 
+            try:
+                explanation = generate_goal_explanation(
+                    explanation_context
+                )
+
+                goal_suggestions["explanation"] = (
+                    explanation["explanation"]
+                )
+
+            except GoalExplanationError:
+
+                goal_suggestions["explanation"] = (
+                    "Your current financial plan is unlikely "
+                    "to achieve your goal within the selected "
+                    "time horizon. Consider the suggestions "
+                    "above and review your investment strategy."
+                )
         # 5. Select actual instruments, respecting
         #    the user's Step 5 category preferences.
         selected_instruments = (
@@ -185,16 +222,27 @@ def generate_financial_plan(
         # 7. LLM plan generation. Raises PlanGenerationError
         #    if the LLM fails or returns invalid output —
         #    no fallback plan is substituted.
-        try:
-            plan = generate_plan(context)
-        except PlanGenerationError as error:
-            raise HTTPException(
-                status_code=502,
-                detail=(
-                    "Could not generate a financial plan: "
-                    f"{error}"
-                ),
-            )
+        if feasibility["goal_feasible"]:
+
+            try:
+                plan = generate_plan(context)
+            except PlanGenerationError as error:
+                raise HTTPException(
+                    status_code=502,
+                    detail=(
+                        "Could not generate a financial plan: "
+                        f"{error}"
+                    ),
+                )
+
+        else:
+
+            plan = {
+                "plans": [],
+                "disclaimer": "",
+                "warnings": [],
+                "llm_used": False,
+            }
 
         # 8. Validate.
         validation = validate_plan(
@@ -209,6 +257,8 @@ def generate_financial_plan(
             "success": True,
             "risk_profile": risk_profile,
             "feasibility": feasibility,
+             "goal_suggestions":
+                goal_suggestions,
             "portfolio": {
                 "recommended_instruments":
                     selected_instruments,

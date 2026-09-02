@@ -25,6 +25,10 @@ class FeasibilityResponse(BaseModel):
 class PortfolioResponse(BaseModel):
     recommended_instruments: Dict[str, List[Dict[str, Any]]]
 
+class GoalSuggestionsResponse(BaseModel):
+    goal_feasible: bool
+    suggestions: List[Dict[str, str]]
+    explanation: str | None = None
 
 class PlanResponse(BaseModel):
     plans: List[Dict[str, Any]]
@@ -42,6 +46,9 @@ class GeneratePlanResponse(BaseModel):
     success: bool
     risk_profile: RiskProfileResponse
     feasibility: FeasibilityResponse
+
+    goal_suggestions: GoalSuggestionsResponse
+
     portfolio: PortfolioResponse
     plan: PlanResponse
     metadata: MetadataResponse

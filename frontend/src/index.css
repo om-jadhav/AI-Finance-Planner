@@ -1612,6 +1612,63 @@ a.primary-button.cta-button {
 }
 
 /* ---------- Disclaimer ---------- */
+/* ---------- Goal Suggestions ---------- */
+
+.goal-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.goal-suggestions h4 {
+  margin: 0 0 6px;
+  font-family: "Manrope", sans-serif;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.goal-suggestion-card {
+  padding: 18px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: #fbfcfb;
+}
+
+.goal-suggestion-card strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: var(--primary-dark);
+}
+
+.goal-suggestion-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.goal-explanation {
+  margin-top: 8px;
+  padding: 20px;
+  border-radius: 14px;
+  background: var(--primary-light);
+  border-left: 4px solid var(--primary);
+}
+
+.goal-explanation h4 {
+  margin: 0 0 10px;
+  font-family: "Manrope", sans-serif;
+  font-size: 15px;
+  color: var(--primary-dark);
+}
+
+.goal-explanation p {
+  margin: 0;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.7;
+}
 
 .plan-disclaimer {
   margin-top: 18px;
