@@ -5,7 +5,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 // Public pages
 import HomePage from "./pages/HomePage";
-import CalculatorPage from "./pages/CalculatorPage";
 import AssessmentPage from "./pages/AssessmentPage";
 
 // Auth pages
@@ -17,6 +16,7 @@ import Dashboard from "./pages/Dashboard";
 import FinancialProfile from "./pages/FinancialProfile";
 import GeneratedPlan from "./pages/GeneratePlan";
 import FinancialAssistant from "./pages/FinancialAssistant";
+import CalculatorPage from "./pages/CalculatorPage";
 
 export default function App() {
   return (
@@ -25,9 +25,6 @@ export default function App() {
         <Routes>
           {/* Public landing page */}
           <Route path="/" element={<HomePage />} />
-
-          {/* Public calculators (no login required) */}
-          <Route path="/calculators" element={<CalculatorPage />} />
 
           {/* Public 2-minute financial health quiz (no login required) */}
           <Route path="/assessment" element={<AssessmentPage />} />
@@ -53,13 +50,14 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-
-          {/* Plan page – decide if you want it protected or not. 
-              Currently it's not wrapped, so public. If you need auth, wrap it. */}
-          <Route path="/plan" element={<GeneratedPlan />} />
-
-          {/* Fallback – redirect unknown routes to home */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route
+            path="/calculators"
+            element={
+              <ProtectedRoute>
+                <CalculatorPage />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/financial-assistant"
             element={
@@ -69,8 +67,12 @@ export default function App() {
             }
           />
 
+          {/* Plan page – decide if you want it protected or not. 
+              Currently it's not wrapped, so public. If you need auth, wrap it. */}
+          <Route path="/plan" element={<ProtectedRoute><GeneratedPlan /></ProtectedRoute>} />
+
           {/* Unknown routes */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

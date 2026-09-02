@@ -37,8 +37,7 @@ export default function Sidebar({ active }) {
           to="/calculators"
           className={`nav-item ${active === "calculator" ? "active" : ""}`}
         >
-          <Icon>🧮</Icon>
-          Calculators
+        <i className="fas fa-calculator"></i>          Calculators
         </Link>
 
         <Link
