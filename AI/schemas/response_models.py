@@ -23,7 +23,6 @@ class FeasibilityResponse(BaseModel):
 
 
 class PortfolioResponse(BaseModel):
-    allocation: Dict[str, float]
     recommended_instruments: Dict[str, List[Dict[str, Any]]]
 
 

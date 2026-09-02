@@ -8,37 +8,16 @@ from typing import Any, Dict, List
 def validate_plan(
     risk_profile: Dict[str, Any],
     feasibility: Dict[str, Any],
-    allocation: Dict[str, Any],
     selected_instruments: Dict[str, Any],
     plan: Dict[str, Any],
 ) -> Dict[str, Any]:
-    """Validate deterministic plan consistency."""
+    """Validate generated financial plan consistency."""
 
     errors: List[str] = []
     warnings: List[str] = []
 
-    allocation_total = sum(
-        allocation.values()
-    )
-
-    if allocation_total != 100:
-        errors.append(
-            f"Allocation total is "
-            f"{allocation_total}, expected 100."
-        )
-
-    for category, percentage in (
-        allocation.items()
-    ):
-        if percentage < 0:
-            errors.append(
-                f"Negative allocation in "
-                f"{category}."
-            )
-
-    if risk_profile.get(
-        "risk_category"
-    ) not in [
+    # Validate risk category
+    if risk_profile.get("risk_category") not in [
         "Conservative",
         "Moderate",
         "Aggressive",
@@ -47,6 +26,7 @@ def validate_plan(
             "Invalid risk category."
         )
 
+    # Validate feasibility data
     if feasibility.get(
         "required_monthly_investment"
     ) is None:
@@ -54,10 +34,31 @@ def validate_plan(
             "Missing required monthly investment."
         )
 
-    if not plan.get("plans"):
+    # Validate plans exist
+    plans = plan.get("plans", [])
+
+    if not plans:
         warnings.append(
             "Plan has no variants."
         )
+
+    # Validate each plan allocation totals 100%
+    for plan_item in plans:
+
+        allocation = plan_item.get(
+            "allocation",
+            [],
+        )
+
+        total = sum(
+            item.get("percent", 0)
+            for item in allocation
+        )
+
+        if total != 100:
+            errors.append(
+                f"{plan_item.get('variant', 'Unknown')} allocation totals {total}%."
+            )
 
     valid = len(errors) == 0
 
