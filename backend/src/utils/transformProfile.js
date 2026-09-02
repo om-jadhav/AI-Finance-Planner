@@ -58,6 +58,13 @@ function toLlmInputPayload(userId, profile) {
 
     profile: {
       age: profile.age,
+      employment_status: capitalize(
+        profile.employmentStatus
+      ),
+
+      marital_status: capitalize(
+        profile.maritalStatus
+      ),
       monthly_income: profile.monthlyIncome,
       monthly_expenses: profile.monthlyExpense,
       current_savings: profile.currentSavings,
